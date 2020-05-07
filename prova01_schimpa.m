@@ -20,7 +20,6 @@ end
 
 emptyRows=flip(emptyRows);  % Rimuovo i NaN a partire dalla fine se no mi scalano gli indici e rimuovo righe non NaN
 for i=emptyRows
-    disp(i)
     dati(i,:)=[]; 
 end
 %% Variabili utili
@@ -38,22 +37,52 @@ Phi = [ones(728,1) dati(1:end,4)...
     cos(dati(1:end,4)*2*pi/7) sin(dati(1:end,4)*2*pi/7)...
     cos(dati(1:end,4)*2*pi*2/7) sin(dati(1:end,4)*2*pi*2/7)...
     cos(dati(1:end,4)*2*pi*3/7) sin(dati(1:end,4)*2*pi*3/7)];
-thetaLS=Phi\carico
+thetaLS=Phi\carico;
 % [thetaLS,var_theta,SSR] = stimaLS(carico_n,Phi);
 % disp(thetaLS)
 
 %% Plot di modello e dati
-Phi1 = [ones(size(dati,1),1) dati(:,4)...
-    cos(dati(:,4)*2*pi/365) sin(dati(:,4)*2*pi/365)...
-    ...cos(x_vec*2*pi*2/365) sin(x_vec*2*pi*2/365)...
-    cos(dati(:,4)*2*pi/7) sin(dati(:,4)*2*pi/7)...
-    cos(dati(:,4)*2*pi*2/7) sin(dati(:,4)*2*pi*2/7)...
-    cos(dati(:,4)*2*pi*3/7) sin(dati(:,4)*2*pi*3/7)];
 
 figure(1)
 plot(dati(:,4),carico,'o-')
 grid on
 hold on
-plot(dati(:,4),Phi1*thetaLS)
+plot(dati(:,4),Phi*thetaLS)
 
 legend('dati', 'stima')
+
+%% Stessa stima ma scritta leggermente diversa (e piu' giusta)
+
+Phi2 = [ones(728,1) dati(1:end,4)...
+    cos(dati(1:end,1)*2*pi/365) sin(dati(1:end,1)*2*pi/365)...
+    cos(dati(1:end,2)*2*pi/7) sin(dati(1:end,2)*2*pi/7)...
+    cos(dati(1:end,2)*2*pi*2/7) sin(dati(1:end,2)*2*pi*2/7)...
+    cos(dati(1:end,2)*2*pi*3/7) sin(dati(1:end,2)*2*pi*3/7)];
+thetaLS2=Phi2\carico;
+
+figure(2)
+plot(dati(:,4),carico,'o-')
+grid on
+hold on
+plot(dati(:,4),Phi2*thetaLS2)
+
+legend('dati', 'stima')
+
+%% Se usassi un solo anno per identificare il modello
+Phi3 = [ones(365,1) dati(1:365,4)...
+    cos(dati(1:365,1)*2*pi/365) sin(dati(1:365,1)*2*pi/365)...
+    cos(dati(1:365,2)*2*pi/7) sin(dati(1:365,2)*2*pi/7)...
+    cos(dati(1:365,2)*2*pi*2/7) sin(dati(1:365,2)*2*pi*2/7)...
+    cos(dati(1:365,2)*2*pi*3/7) sin(dati(1:365,2)*2*pi*3/7)];
+thetaLS3=Phi3\carico(1:365);
+
+
+figure(3)
+plot(dati(:,4),carico,'o-')
+grid on
+hold on
+plot(dati(:,4),Phi2*thetaLS3)
+
+legend('dati', 'stima')
+
+% Questo fa schifo, perchè non ha dentro il trend di salita

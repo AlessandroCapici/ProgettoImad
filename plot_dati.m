@@ -4,15 +4,15 @@ close all
 load('caricoDEday.mat')
 dati = table2array(caricoDEday);
 
+x_vec=(1:size(dati))';
+dati = [dati x_vec];
+%% Plot di tutti i dati
 figure(1)
 plot(dati(:,3),'o-')
 grid on
 title('Plot brutale dei dati')
 
-x_vec=(1:size(dati))';
-
-dati = [dati x_vec];
-
+%% Plot dei dati divisi per giorno della settimana
 dati_dom=[];
 dati_lun=[];
 dati_mar=[];
@@ -55,3 +55,13 @@ legend('Lunedi', 'Martedi', 'Mercoledi','Giovedi','Venerdi','Sabato','Domenica')
 title('Dati collegati in base al giorno della settimana')
 % Se si vogliono vedere i dati relativi a un unico giorno della settimana
 % basta commentare le linee di codice dei plot che non si vogliono vedere
+
+
+%% Plot 3D usando sugli assi giorno della settimana e giorno dell'anno
+
+figure(3)
+plot3(dati(:,1), dati(:,2), dati(:,3),'o')
+xlabel('Giorno dell''anno')
+ylabel('Giorno della settimana')
+zlabel('Consumo energetico')
+grid on
