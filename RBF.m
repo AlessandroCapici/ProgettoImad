@@ -20,12 +20,12 @@ for i=emptyRows
     load(i,:)=[]; 
 end
 %% variabili a caso
-giorni_anno = load(:,1);
+giorni_anno = load(1:365,2);
 carico = load(1:365,3);
-x= (1:length(carico));
+x= (1:length(carico))';
 carico_n = normalize(carico)';
 n = length(carico);
-
+in=[x , giorni_anno]';
 %% Creo la rete neurale
 nnetwork=fitnet([10,8,5]);
 ...Size of the hidden layers in the network, specified as a row vector. 
@@ -40,8 +40,8 @@ nnetwork.trainParam.lr=0.05;    %li ho copiati da internet ahahha
 nnetwork.trainParam.epochs=300;
 
 %% Fase di learning
-nnetwork=train(nnetwork,x,carico_n); 
-simulazione=sim(nnetwork,x);
+nnetwork=train(nnetwork,in,carico_n); 
+simulazione=sim(nnetwork,in);
 figure(1);
 plot(simulazione);
 grid on;
@@ -52,8 +52,10 @@ legend('simulazione','dati');
 %% Fase di test
 carico_test=load(365:end,3);
 carico_test=normalize(carico_test)';
-x_test=(1:length(carico_test));
-simtest=sim(nnetwork,x_test);
+giorni_anno_test = load(365:end,2);
+x_test=(1:length(carico_test))';
+in_test=[x_test,giorni_anno_test]';
+simtest=sim(nnetwork,in_test);
 figure(2);
 grid on;
 hold on;
