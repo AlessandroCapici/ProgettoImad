@@ -37,30 +37,28 @@ nnetwork=fitnet([20,20,20]);
 %% Setto alcuni parametri
 nnetwork.trainParam.show=50;
 nnetwork.trainParam.lr=0.1;    %li ho copiati da internet ahahha
-nnetwork.trainParam.epochs=700;
-net.trainParam.min_grad = 1e-10;
+nnetwork.trainParam.epochs=300;
+net.trainParam.min_grad = 1e-5;
 
 
 
 
 %% SCOPRO QUANTO FIGO E' IL MODELLO 
-
 % array con tutti tipi di modello
 reti = {'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingdm', 'traingd'};
 % devo fare loop N volte per trovare array MSE di ciascun tipo di modello
-N=30;
+N=10;
 contatore =0;
-mse = zeros(length(reti),N);
+% mse_matrix terrà valori mse calcolati per ogni tipo di modello
+mse_matrix = zeros(length(reti),N);
 for iteratore_reti = 1:length(reti)
     for c = 1:N
         %% Fase di learning
         nnetwork=fitnet([20,20,20], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
         simulazione=sim(nnetwork,in);
-        %% fase di calcolo errore e MSE
-        errortraining= simulazione-carico_n;
-        array_di_zero = zeros(1, length(errortraining)); %creo array di 0
-        mse (iteratore_reti, c) = [ immse(errortraining,array_di_zero)];
+        %% fase di calcolo MSE
+        mse_matrix (iteratore_reti, c) = [ mse(nnetwork, carico_n, simulazione, 5)];
         
         % stampo per comodità iterazione : totale_iterazioni
         contatore = contatore+1;
@@ -70,13 +68,13 @@ end
 
 
 
-% calcolo media di ogni MSE
+% calcolo media di ogni MSE ordinati in base a modello
 mse_avg = [];
 mse_avg = [mse_avg reti'];
-mse_avg = [mse_avg mean(mse')'];
+mse_avg = [mse_avg string(mean(mse_matrix')')]
 
 
-%% da qui in poi roba che c'era prima
+%% da qui in poi calcolo di un modello 
 
 %% Fase di learning
 nnetwork=train(nnetwork,in,carico_n); 
@@ -107,15 +105,9 @@ legend('simulazione','dati');
 figure(3);
 
 errortraining= simulazione-carico_n;
-array_di_zero = zeros(1, length(errortraining)); %creo array di 0
-MSE = immse(errortraining,array_di_zero);
-
 errortest= simtest-carico_n;
 plot (errortraining, 'black');
-
+mse(nnetwork, carico_n, simulazione, 5)
 legend('error training','error test');
 
-%% tentativi per ottenere un valore per stimare modello 
-array_di_zero = zeros(1, length(errortraining)); %creo array di 0
-MSE = immse(errortraining,array_di_zero);
 
