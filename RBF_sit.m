@@ -74,7 +74,7 @@ mse_avg = [mse_avg reti'];
 mse_avg = [mse_avg string(mean(mse_matrix')')]
 
 
-%% da qui in poi calcolo di un modello 
+%% da qui in poi calcolo di un
 
 %% Fase di learning
 nnetwork=train(nnetwork,in,carico_n); 
