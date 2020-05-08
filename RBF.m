@@ -20,14 +20,14 @@ for i=emptyRows
     load(i,:)=[]; 
 end
 %% variabili a caso
-giorni_anno = load(1:364,2);
-carico = load(1:364,3);
+giorni_anno = load(1:365,2);
+carico = load(1:365,3);
 x= (1:length(carico))';
 carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
 %% Creo la rete neurale
-nnetwork=fitnet([10,8,5]);
+nnetwork=fitnet([20,20,20]);
 ...Size of the hidden layers in the network, specified as a row vector. 
 ...The length of the vector determines the number of hidden layers in the network.
 ...Example: For example, you can specify a network with 3 hidden layers, 
@@ -36,8 +36,9 @@ nnetwork=fitnet([10,8,5]);
 
 %% Setto alcuni parametri
 nnetwork.trainParam.show=50;
-nnetwork.trainParam.lr=0.05;    %li ho copiati da internet ahahha
-nnetwork.trainParam.epochs=300;
+nnetwork.trainParam.lr=0.10;    %li ho copiati da internet ahahha
+nnetwork.trainParam.epochs=700;
+net.trainParam.min_grad = 1e-10;
 
 %% Fase di learning
 nnetwork=train(nnetwork,in,carico_n); 
@@ -50,9 +51,9 @@ plot(carico_n);
 hold on;
 legend('simulazione','dati');
 %% Fase di test
-carico_test=load(365:end,3);
+carico_test=load(364:end,3);
 carico_test=normalize(carico_test)';
-giorni_anno_test = load(365:end,2);
+giorni_anno_test = load(364:end,2);
 x_test=(1:length(carico_test))';
 in_test=[x_test,giorni_anno_test]';
 simtest=sim(nnetwork,in_test);
@@ -67,9 +68,7 @@ legend('simulazione','dati');
 figure(3);
 errortraining= simulazione-carico_n;
 errortest= simtest-carico_n;
-plot(errortraining,'blue');
-hold on ;
-p1=plot(errortest,'red');
-grid on ;
+plot (errortraining-errortest, 'black');
+
 legend('error training','error test');
 
