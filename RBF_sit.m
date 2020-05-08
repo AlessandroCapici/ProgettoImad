@@ -54,7 +54,7 @@ mse = zeros(length(reti),N);
 for iteratore_reti = 1:length(reti)
     for c = 1:N
         %% Fase di learning
-        nnetwork=fitnet([20,20,20], toStringJSON(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
+        nnetwork=fitnet([20,20,20], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
         simulazione=sim(nnetwork,in);
         %% fase di calcolo errore e MSE
