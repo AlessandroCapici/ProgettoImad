@@ -69,12 +69,12 @@ plot(dati(:,4),Phi2*thetaLS2)
 legend('dati', 'stima')
 
 %% Se usassi un solo anno per identificare il modello
-Phi3 = [ones(365,1) dati(1:365,4)...
-    cos(dati(1:365,1)*2*pi/365) sin(dati(1:365,1)*2*pi/365)...
-    cos(dati(1:365,2)*2*pi/7) sin(dati(1:365,2)*2*pi/7)...
-    cos(dati(1:365,2)*2*pi*2/7) sin(dati(1:365,2)*2*pi*2/7)...
-    cos(dati(1:365,2)*2*pi*3/7) sin(dati(1:365,2)*2*pi*3/7)];
-thetaLS3=Phi3\carico(1:365);
+Phi3 = [ones(364,1) dati(365:end,4)...
+    cos(dati(365:end,1)*2*pi/365) sin(dati(365:end,1)*2*pi/365)...
+    cos(dati(365:end,2)*2*pi/7) sin(dati(365:end,2)*2*pi/7)...
+    cos(dati(365:end,2)*2*pi*2/7) sin(dati(365:end,2)*2*pi*2/7)...
+    cos(dati(365:end,2)*2*pi*3/7) sin(dati(365:end,2)*2*pi*3/7)];
+thetaLS3=Phi3\carico(365:end);
 
 
 figure(3)
@@ -86,3 +86,23 @@ plot(dati(:,4),Phi2*thetaLS3)
 legend('dati', 'stima')
 
 % Questo fa schifo, perchè non ha dentro il trend di salita
+
+%%
+Phi4 = [ones(728,1) dati(:,4)];
+thetaLS4=Phi4\(dati(:,3));
+
+trend = Phi4*thetaLS4;
+
+figure(4)
+plot(dati(:,4),carico,'o-')
+grid on
+hold on
+plot(dati(:,4),Phi4*thetaLS4)
+
+legend('dati', 'stima')
+
+
+%% Dati senza trend
+figure(5)
+plot(dati(:,4), dati(:,3)-trend,'o-')
+grid on

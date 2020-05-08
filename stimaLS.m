@@ -9,4 +9,3 @@ sigma_hat = SSR/(n-q);
 var_theta = sigma_hat * inv(phi.'*phi);
 
 end
-
