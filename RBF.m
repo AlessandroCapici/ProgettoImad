@@ -20,8 +20,8 @@ for i=emptyRows
     load(i,:)=[]; 
 end
 %% variabili a caso
-giorni_anno = load(1:365,2);
-carico = load(1:365,3);
+giorni_anno = load(1:364,2);
+carico = load(1:364,3);
 x= (1:length(carico))';
 carico_n = normalize(carico)';
 n = length(carico);
@@ -63,3 +63,13 @@ plot(simtest);
 hold on;
 plot(carico_test);
 legend('simulazione','dati');
+%% plot errore
+figure(3);
+errortraining= simulazione-carico_n;
+errortest= simtest-carico_n;
+plot(errortraining,'blue');
+hold on ;
+p1=plot(errortest,'red');
+grid on ;
+legend('error training','error test');
+
