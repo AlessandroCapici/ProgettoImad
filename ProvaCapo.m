@@ -5,6 +5,20 @@ close all;
 %% caricamento dati
 load('caricoDEday');
 load = table2array(caricoDEday);
+
+x_vec = (1:size(load,1))';
+load =  [load x_vec];
+%% Eliminazione dei NaN
+emptyRows=[];
+for i=load(:,4)'
+    if isnan(load(i,3))
+        emptyRows=[emptyRows i];
+    end
+end
+emptyRows=flip(emptyRows);  
+for i=emptyRows
+    load(i,:)=[]; 
+end
 %% variabili a caso
 giorni_anno = load(:,1);
 carico = load(:,3);
@@ -20,13 +34,8 @@ hold on;
 
 %% ls model 
 q=5;
-Phi=ones(n,q);
-thetaLS=Phi\carico_n;
+Phi=[ones(728,1) x x.^2 x.^3 x.^4 x.^5 x.^6 x.^7 x.^8 x.^9 x.^10];
+[thetaLS,var_theta,SSR] = stimaLS(carico_n,Phi);
 carico_hat=Phi*thetaLS;
-epsilon= carico-carico_hat;                 %MI DA TUTTO NaN MADONNA MAIALA.......non so il perchè
-SSR=epsilon'*epsilon;
-var_hat= SSR/(n-q);
-var_thetaLS=var_hat*(inv(Phi'*Phi));
-std_thetaLS=sqrt(var_thetaLS);
 plot(x,carico_hat);
 legend('dati','stima');
