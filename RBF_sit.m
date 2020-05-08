@@ -47,7 +47,8 @@ net.trainParam.min_grad = 1e-10;
 % array con tutti tipi di modello
 reti = {'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingdm', 'traingd'};
 % devo fare loop N volte per trovare array MSE di ciascun tipo di modello
-N=2;
+N=30;
+contatore =1;
 mse = zeros(length(reti),N);
 for iteratore_reti = 1:length(reti)
     for c = 1:N
@@ -59,8 +60,13 @@ for iteratore_reti = 1:length(reti)
         errortraining= simulazione-carico_n;
         array_di_zero = zeros(1, length(errortraining)); %creo array di 0
         mse (iteratore_reti, c) = [ immse(errortraining,array_di_zero)];
+        
+        % stampo per comodità iterazione : totale_iterazioni
+        disp (['iterazione: ' num2str(contatore) ' di ' num2str(N*length(reti))]);
     end
 end
+
+
 
 % calcolo media di ogni MSE
 mse_avg = [];
