@@ -45,9 +45,16 @@ net.trainParam.min_grad = 1e-5;
 
 %% creazione di array riassuntivo di modello migliore basandosi su funzione di training
 % array con tutti tipi di funzioni di training
-reti = {'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingdm', 'traingd'};
+reti = {'trainlm', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingdm', 'traingd', 'trainbr'};
 % devo fare loop N volte per trovare array MSE di ciascun tipo di funzione
-N=20; %non impostarlo a 1. non gli piace
+
+%%%% N SPECIFICA NUMERO DI ITERAZIONI. N BASSO FA BENE ALLA SALUTE DEL PC
+N=3; %non impostarlo a 1. non gli piace
+%%%% 
+
+% variabili di servizio
+lunghezza_iterazione=50/N;
+lunghezza_iterazione=int16(lunghezza_iterazione);
 %creo mse minimo e massimo per poter tenere conto di risultati estremi
 mse_minimo=zeros(12,1);
 %creo array di network per poter tenere conto di network migliore
@@ -55,10 +62,16 @@ nnetwork_array = cell(12,1);
 % mse_matrix terrà valori mse calcolati per ogni tipo di funzione
 mse_matrix (1:length(reti), 1:N)=100;
 for iteratore_reti = 1:length(reti)
+    if(iteratore_reti==1)
+        fprintf('\t\t\t');
+        fprintf('---------------------progress---------------------');
+        fprintf("\tavg\t\tmin");
+    end
     fprintf('\n');
-    disp (['funzione: ' reti{iteratore_reti} '  ' num2str(iteratore_reti) ' : ' num2str(length(reti))]);
+    fprintf("%s \t",reti{iteratore_reti});
+    %disp (['funzione: ' reti{iteratore_reti} '  ' num2str(iteratore_reti) ' : ' num2str(length(reti))]);
     for c = 1:N
-        disp (['    iterazione: ' num2str(c) ' : ' num2str(N)]);
+        %disp (['    iterazione: ' num2str(c) ' : ' num2str(N)]);
         %% Fase di learning
         nnetwork=fitnet([20,20,20], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
@@ -73,21 +86,43 @@ for iteratore_reti = 1:length(reti)
             % alcuni modelli sembra non volerli salvare perchè forse non
             % cadono nello standard network 
             nnetwork_array{iteratore_reti} = nnetwork;
-            disp (['        salvata network num ' num2str(iteratore_reti) ' in prossimità a MSE minimo: ' num2str(mse_current)]);
+            %disp (['        salvata network num ' num2str(iteratore_reti) ' in prossimità a MSE minimo: ' num2str(mse_current)]);
             % per stampare dal array nnetwork_array basta fare  {1}
+        end
+        %% parte per visualizzazione
+        for contatore_visualizzazione = 1:lunghezza_iterazione
+            if(contatore_visualizzazione ==1 || (contatore_visualizzazione ==lunghezza_iterazione && c==N))
+                fprintf("|");
+                continue;
+            end;
+            fprintf("x");
+        end
+        if(c == N)
+            fprintf("\t%2.3f,\t%2.3f",mean(mse_matrix(iteratore_reti, :)) ,mse_minimo(iteratore_reti));
         end
     end
 end
 
 
-
-% calcolo media di ogni MSE ordinati in base a modello
+%%% MATRICE IN FORMATO STRINGA CHE RIPORTA QUANTO VISIBILE SU COMAND LINE
+%matrice finale avrà: [nome_funzione_di_training, avg_mse, mse_minimo]
 mse_avg = [];
 mse_avg = [mse_avg reti'];
-mse_avg = [mse_avg string(mean(mse_matrix')') mse_minimo]
-%matrice finale avrà: [nome_funzione_di_training, avg_mse, mse_minimo]
+mse_avg = [mse_avg string(round(mean(mse_matrix')',3)) mean(mse_minimo,3)];
 
-%% stampa di modello migliore
+%stampa di modello migliore e peggiore con relativi valori
+riga_mse_minimo=find (mse_minimo == min(mse_minimo));
+riga_mse_massimo=find (mse_minimo == max(mse_minimo));
+fprintf("\nmodello migliore:\t%s \t%s\t%s\n", mse_avg(riga_mse_minimo, :));
+fprintf("modello peggiore:\t%s\t%s\t%s\n", mse_avg(riga_mse_massimo, :));
+
+
+
+%%% network_array contiene network corrispondenti a mse minimo per ogni
+%%% funzione di training. scrivere network_array{indice} per usarla.
+
+
+%% stampa di modello migliore (mse minimo)
 
 carico_test=load(1:end,3);
 carico_test=normalize(carico_test)';
@@ -107,15 +142,14 @@ plot(simulazione);
 hold on;
 plot(carico_test);
 legend('simulazione','dati');
-
-%% stampa di errore relativo
+% stampa di errore relativo
 subplot(2,1,2);
 errortraining= simulazione-carico_n;
 plot (errortraining, 'black');
 title('errore modello migliore');
 legend('error training','error test');
 
-%% stampa di modello peggiore
+%% stampa di modello peggiore (MSE massimo)
 % per trovare riga con mse minimo
 riga_mse_massimo=find (mse_minimo == max(mse_minimo));
 simulazione1=sim(nnetwork_array{riga_mse_massimo}, in_test);
