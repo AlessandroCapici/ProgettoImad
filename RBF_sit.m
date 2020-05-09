@@ -27,7 +27,7 @@ carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
 %% Creo la rete neurale
-nnetwork=fitnet([20,20,20]);
+nnetwork=fitnet([10,8,5]);
 ...Size of the hidden layers in the network, specified as a row vector. 
 ...The length of the vector determines the number of hidden layers in the network.
 ...Example: For example, you can specify a network with 3 hidden layers, 
@@ -47,8 +47,7 @@ net.trainParam.min_grad = 1e-5;
 % array con tutti tipi di funzioni di training
 reti = {'trainlm', 'trainbr', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 'traincgp', 'trainoss', 'traingdx', 'traingdm', 'traingd'};
 % devo fare loop N volte per trovare array MSE di ciascun tipo di funzione
-N=2;
-contatore =0;
+N=20; %non impostarlo a 1. non gli piace
 %creo mse minimo e massimo per poter tenere conto di risultati estremi
 mse_minimo=zeros(12,1);
 %creo array di network per poter tenere conto di network migliore
@@ -56,10 +55,10 @@ nnetwork_array = cell(12,1);
 % mse_matrix terrà valori mse calcolati per ogni tipo di funzione
 mse_matrix (1:length(reti), 1:N)=100;
 for iteratore_reti = 1:length(reti)
+    fprintf('\n');
+    disp (['funzione: ' reti{iteratore_reti} '  ' num2str(iteratore_reti) ' : ' num2str(length(reti))]);
     for c = 1:N
-        % stampo per comodità iterazione rispetto il totale di iterazioni
-        contatore = contatore+1;
-        disp (['iterazione: ' num2str(contatore) ' di ' num2str(N*length(reti))]);
+        disp (['    iterazione: ' num2str(c) ' : ' num2str(N)]);
         %% Fase di learning
         nnetwork=fitnet([20,20,20], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
@@ -74,7 +73,7 @@ for iteratore_reti = 1:length(reti)
             % alcuni modelli sembra non volerli salvare perchè forse non
             % cadono nello standard network 
             nnetwork_array{iteratore_reti} = nnetwork;
-            disp (['     salvata network num' num2str(iteratore_reti) ' in prossimità a val. minimo: ' num2str(mse_current)]);
+            disp (['        salvata network num ' num2str(iteratore_reti) ' in prossimità a MSE minimo: ' num2str(mse_current)]);
             % per stampare dal array nnetwork_array basta fare  {1}
         end
     end
@@ -100,17 +99,17 @@ in_test=[x_test,giorni_anno_test]';
 riga_mse_minimo=find (mse_minimo == min(mse_minimo));
 simualzione=sim(nnetwork_array{riga_mse_minimo}, in_test);
 figure(1);
-title('modello migliore');
 grid on;
 hold on;
+subplot(2,1,1);
+title('modello migliore');
 plot(simulazione);
 hold on;
 plot(carico_test);
 legend('simulazione','dati');
 
 %% stampa di errore relativo
-
-figure(2);
+subplot(2,1,2);
 errortraining= simulazione-carico_n;
 plot (errortraining, 'black');
 title('errore modello migliore');
@@ -124,15 +123,15 @@ figure(3);
 title('modello peggiore');
 grid on;
 hold on;
+subplot(2,1,1);
 plot(simulazione1);
 hold on;
 plot(carico_test);
 legend('simulazione','dati');
 
 %% stampa di errore relativo
-
-figure(4);
 errortraining= simulazione1-carico_n;
+subplot(2,1,2);
 plot (errortraining, 'black');
 title('errore modello peggiore');
 legend('error training','error test');
