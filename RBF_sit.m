@@ -180,12 +180,14 @@ for i = 1:(1092/7)
 end
 in_test2(2,:) = array_settimane;
 
-simulazione3=sim(nnetwork_array{riga_mse_minimo}, in_test2);
-figure(4);
-title("previsione");
-plot(simulazione3);
-hold on;
-plot(carico_test);
+for contatore= 1:length(reti)
+    simulazione3=sim(nnetwork_array{contatore}, in_test2);
+    figure(contatore);
+    title(reti{contatore});
+    plot(simulazione3);
+    hold on;
+    plot(carico_test);
+end
 
 
 
