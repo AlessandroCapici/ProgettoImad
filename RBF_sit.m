@@ -49,7 +49,7 @@ reti = {'trainlm', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 't
 % devo fare loop N volte per trovare array MSE di ciascun tipo di funzione
 
 %%%% N SPECIFICA NUMERO DI ITERAZIONI. N BASSO FA BENE ALLA SALUTE DEL PC
-N=3; %non impostarlo a 1. non gli piace
+N=2; %non impostarlo a 1. non gli piace
 %%%% 
 
 % variabili di servizio
@@ -170,6 +170,22 @@ plot (errortraining, 'black');
 title('errore modello peggiore');
 legend('error training','error test');
 
+
+%% cose a caso 
+in_test2 = zeros(2, 1092);
+in_test2 (1,:)=[1:1092];
+array_settimane=[];
+for i = 1:(1092/7)
+    array_settimane= [array_settimane 3 4 5 6 7 1 2];
+end
+in_test2(2,:) = array_settimane;
+
+simulazione3=sim(nnetwork_array{riga_mse_minimo}, in_test2);
+figure(4);
+title("previsione");
+plot(simulazione3);
+hold on;
+plot(carico_test);
 
 
 
