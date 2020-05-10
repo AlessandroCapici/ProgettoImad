@@ -22,7 +22,9 @@ end
 %% variabili a caso
 giorni_anno = load(1:end,2);
 carico = load(1:end,3);
-x= (1:length(carico))';
+x= (1:364);
+x= [x 1:364];
+x=x';
 carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
@@ -73,7 +75,7 @@ for iteratore_reti = 1:length(reti)
     for c = 1:N
         %disp (['    iterazione: ' num2str(c) ' : ' num2str(N)]);
         %% Fase di learning
-        nnetwork=fitnet([20,20,20], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
+        nnetwork=fitnet([10,5,8], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
         simulazione=sim(nnetwork,in);
         %% fase di calcolo MSE
@@ -162,8 +164,7 @@ plot(simulazione1);
 hold on;
 plot(carico_test);
 legend('simulazione','dati');
-
-%% stampa di errore relativo
+% stampa di errore relativo
 errortraining= simulazione1-carico_n;
 subplot(2,1,2);
 plot (errortraining, 'black');
@@ -173,20 +174,22 @@ legend('error training','error test');
 
 %% cose a caso 
 in_test2 = zeros(2, 1092);
-in_test2 (1,:)=[1:1092];
+in_test2 (1,:)=[1:364 1:364 1:364];
 array_settimane=[];
 for i = 1:(1092/7)
     array_settimane= [array_settimane 3 4 5 6 7 1 2];
 end
 in_test2(2,:) = array_settimane;
 
+%% stampa di tutti i modelli
+figure(5);
 for contatore= 1:length(reti)
     simulazione3=sim(nnetwork_array{contatore}, in_test2);
-    figure(contatore);
-    title(reti{contatore});
+    subplot(2,6,contatore, 'align'); 
     plot(simulazione3);
     hold on;
     plot(carico_test);
+    title(reti{contatore});
 end
 
 
