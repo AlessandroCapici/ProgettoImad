@@ -28,8 +28,10 @@ x=x';
 carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
-in(3,1:364)=1;
-in(3,365:end)=2;
+
+in(1,:)=[1:364 1:364];
+in(3,1:364)=0.1;
+in(3,365:end)=0.2;
 
 %% Creo la rete neurale
 nnetwork=fitnet([10,8,5]);
@@ -137,17 +139,14 @@ giorni_anno_test = load(1:end,2);
 x_test=(1:length(carico_test))';
 in_test=[x_test,giorni_anno_test]';
 
-in_test2 = zeros(2, 1092);
-in_test2 (1,:)=[1:364 1:364 1:364];
-array_settimane=[];
-for i = 1:(1092/7)
-    array_settimane= [array_settimane 3 4 5 6 7 1 2];
-end
+in_test2 = zeros(3, 1092);
+in_test2(1,:)=[in(1,:) 1:364]
+in_test2(2,:)=[in(2,:) in(2,3:366)];
+in_test2(3,1:364) =0.1;
+in_test2(3,365:728)=0.2;
+in_test2(3,729:end)=0.3;
 
-in_test2(2,:) = array_settimane;
-in_test2(3,1:364) =1;
-in_test2(3,365:728)=2;
-in_test2(3,729:end)=3;
+
 
 % per trovare riga con mse minimo
 riga_mse_minimo=find (mse_minimo == min(mse_minimo));
