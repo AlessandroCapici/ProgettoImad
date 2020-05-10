@@ -28,6 +28,9 @@ x=x';
 carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
+in(3,1:364)=1;
+in(3,365:end)=2;
+
 %% Creo la rete neurale
 nnetwork=fitnet([10,8,5]);
 ...Size of the hidden layers in the network, specified as a row vector. 
@@ -125,6 +128,8 @@ fprintf("modello peggiore:\t%s\t%s\t%s\n", mse_avg(riga_mse_massimo, :));
 
 
 %% stampa di modello migliore (mse minimo)
+%% cose a caso 
+
 
 carico_test=load(1:end,3);
 carico_test=normalize(carico_test)';
@@ -132,9 +137,21 @@ giorni_anno_test = load(1:end,2);
 x_test=(1:length(carico_test))';
 in_test=[x_test,giorni_anno_test]';
 
+in_test2 = zeros(2, 1092);
+in_test2 (1,:)=[1:364 1:364 1:364];
+array_settimane=[];
+for i = 1:(1092/7)
+    array_settimane= [array_settimane 3 4 5 6 7 1 2];
+end
+
+in_test2(2,:) = array_settimane;
+in_test2(3,1:364) =1;
+in_test2(3,365:728)=2;
+in_test2(3,729:end)=3;
+
 % per trovare riga con mse minimo
 riga_mse_minimo=find (mse_minimo == min(mse_minimo));
-simualzione=sim(nnetwork_array{riga_mse_minimo}, in_test);
+simulazione=sim(nnetwork_array{riga_mse_minimo}, in_test2);
 figure(1);
 grid on;
 hold on;
@@ -146,7 +163,7 @@ plot(carico_test);
 legend('simulazione','dati');
 % stampa di errore relativo
 subplot(2,1,2);
-errortraining= simulazione-carico_n;
+errortraining= simulazione(1:728)-carico_n;
 plot (errortraining, 'black');
 title('errore modello migliore');
 legend('error training','error test');
@@ -154,7 +171,7 @@ legend('error training','error test');
 %% stampa di modello peggiore (MSE massimo)
 % per trovare riga con mse minimo
 riga_mse_massimo=find (mse_minimo == max(mse_minimo));
-simulazione1=sim(nnetwork_array{riga_mse_massimo}, in_test);
+simulazione1=sim(nnetwork_array{riga_mse_massimo}, in_test2);
 figure(3);
 title('modello peggiore');
 grid on;
@@ -165,21 +182,12 @@ hold on;
 plot(carico_test);
 legend('simulazione','dati');
 % stampa di errore relativo
-errortraining= simulazione1-carico_n;
+errortraining= simulazione1(1:728)-carico_n;
 subplot(2,1,2);
 plot (errortraining, 'black');
 title('errore modello peggiore');
 legend('error training','error test');
 
-
-%% cose a caso 
-in_test2 = zeros(2, 1092);
-in_test2 (1,:)=[1:364 1:364 1:364];
-array_settimane=[];
-for i = 1:(1092/7)
-    array_settimane= [array_settimane 3 4 5 6 7 1 2];
-end
-in_test2(2,:) = array_settimane;
 
 %% stampa di tutti i modelli
 figure(5);
