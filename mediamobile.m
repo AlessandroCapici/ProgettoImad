@@ -25,6 +25,11 @@ A=1;
 B=ones(1,7)/7;
 y_mediamobile=filter(B,A,dati(:,3));
 
+sum=0;
+for i=1:7
+   sum = sum + dati(i,3);
+   y_mediamobile(i)=sum/i;
+end
 
 %% Plot di tutti i dati
 figure(1)
@@ -39,3 +44,8 @@ plot(y_mediamobile)
 grid on
 title('Plot della media mobile')
 
+%% Plot dati a cui ho tolto la media mobile
+
+figure(3)
+plot(dati(:,3)-y_mediamobile,'o-')
+grid on
