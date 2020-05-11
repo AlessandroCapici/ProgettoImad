@@ -27,7 +27,7 @@ carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
 %% Creo la rete neurale
-nnetwork=fitnet([20,20]);
+nnetwork=fitnet([40,20,20]);
 ...Size of the hidden layers in the network, specified as a row vector. 
 ...The length of the vector determines the number of hidden layers in the network.
 ...Example: For example, you can specify a network with 3 hidden layers, 
