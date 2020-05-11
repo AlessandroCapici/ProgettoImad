@@ -1,9 +1,9 @@
-%% per non fare casino
-clear;
-clc;
-close all;
-%% caricamento dati
-load('caricoDEday');
+clear
+close all
+clc
+
+%% Caricamento load
+load('caricoDEday.mat')
 load = table2array(caricoDEday);
 
 x_vec = (1:size(load,1))';
@@ -15,19 +15,30 @@ for i=load(:,4)'
         emptyRows=[emptyRows i];
     end
 end
-emptyRows=flip(emptyRows);  
-for i=emptyRows
-    load(i,:)=[]; 
+
+% Stimo i load mancanti
+for i = emptyRows
+    load(i,3)= (load(i-7,3)+load(i+7,3))/2;
 end
+%% eliminazione trend
+mean_year1 = mean(load(1:365,3));
+mean_year2 = mean(load(366:end,3));
+
+vec=[mean_year1*ones(365,1); mean_year2*ones(365,1)];
+
+load1=load;
+load1(:,3) = load1(:,3)-vec;
+plot(load1(:,3),'-o');
 %% variabili a caso
-giorni_anno = load(1:end,2);
-carico = load(1:end,3);
+giorni_anno = load1(1:end,2);
+carico = load1(1:end,3);
 x= (1:length(carico))';
 carico_n = normalize(carico)';
 n = length(carico);
 in=[x , giorni_anno]';
 %% Creo la rete neurale
-nnetwork=fitnet([40,20,20]);
+
+nnetwork=fitnet([20,20]);
 ...Size of the hidden layers in the network, specified as a row vector. 
 ...The length of the vector determines the number of hidden layers in the network.
 ...Example: For example, you can specify a network with 3 hidden layers, 
@@ -38,37 +49,34 @@ nnetwork=fitnet([40,20,20]);
 nnetwork.trainParam.show=50;
 nnetwork.trainParam.lr=0.10;    %li ho copiati da internet ahahha
 nnetwork.trainParam.epochs=700;
-net.trainParam.min_grad = 1e-10;
 
 %% Fase di learning
-nnetwork=train(nnetwork,in,carico_n); 
-simulazione=sim(nnetwork,in);
+in_t=in(1:2,1:365);
+copy_C=carico_n(1,1:365);
+nnetwork=train(nnetwork,in_t,copy_C); 
+simulazione=sim(nnetwork,in_t);
 figure(1);
 plot(simulazione);
 grid on;
 hold on;
-plot(carico_n);
+plot(copy_C);
 hold on;
-legend('simulazione','dati');
+legend('simulazione','load');
 %% Fase di test
-carico_test=load(1:end,3);
+carico_test=load1(1:end,3);
 carico_test=normalize(carico_test)';
-giorni_anno_test = load(1:end,2);
+giorni_anno_test = load1(1:end,2);
 x_test=(1:length(carico_test))';
 in_test=[x_test,giorni_anno_test]';
 simtest=sim(nnetwork,in_test);
+
 figure(2);
 grid on;
 hold on;
 plot(simtest);
 hold on;
 plot(carico_test);
-legend('simulazione','dati');
-%% plot errore
-figure(3);
-errortraining= simulazione-carico_n;
-errortest= simtest-carico_n;
-plot (errortraining-errortest, 'black');
+legend('simulazione','load');
 
-legend('error training','error test');
+
 
