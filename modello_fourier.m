@@ -39,17 +39,21 @@ end
 
 rowsToDelete = flip(rowsToDelete);
 
-for j = rowsToDelete
-    dati(j,:)=[];
-end
+% for j = rowsToDelete
+%     dati(j,:)=[];
+% end
+
+%% Normalizzo i dati
+sd = std(dati(:,3));
+dati(:,3)=(1/sd)*dati(:,3);
 
 %%
-n = 365;
+n = 700;
 
 Phi = [ones(n,1) ...
     cos(dati(1:n,1)*2*pi/365) sin(dati(1:n,1)*2*pi/365)...
     cos(dati(1:n,1)*2*pi*2/365) sin(dati(1:n,1)*2*pi*2/365)...
-    cos(dati(1:n,1)*2*pi*3/365) sin(dati(1:n,1)*2*pi*3/365)...
+    ...cos(dati(1:n,1)*2*pi*3/365) sin(dati(1:n,1)*2*pi*3/365)...
    ... cos(dati(1:n,1)*2*pi*4/365) sin(dati(1:n,1)*2*pi*4/365)...
     cos(dati(1:n,2)*2*pi/7) sin(dati(1:n,2)*2*pi/7)...
     cos(dati(1:n,2)*2*pi*2/7) sin(dati(1:n,2)*2*pi*2/7)...
@@ -62,7 +66,7 @@ n=size(dati,1);
 Phi_p =  [ones(n,1) ...
     cos(dati(1:n,1)*2*pi/365) sin(dati(1:n,1)*2*pi/365)...
     cos(dati(1:n,1)*2*pi*2/365) sin(dati(1:n,1)*2*pi*2/365)...
-    cos(dati(1:n,1)*2*pi*3/365) sin(dati(1:n,1)*2*pi*3/365)...
+   ... cos(dati(1:n,1)*2*pi*3/365) sin(dati(1:n,1)*2*pi*3/365)...
   ...  cos(dati(1:n,1)*2*pi*4/365) sin(dati(1:n,1)*2*pi*4/365)...
     cos(dati(1:n,2)*2*pi/7) sin(dati(1:n,2)*2*pi/7)...
     cos(dati(1:n,2)*2*pi*2/7) sin(dati(1:n,2)*2*pi*2/7)...
@@ -78,3 +82,17 @@ hold on
 plot(dati(:,4),Y_hat)
 grid on
 legend('Dati','Stima')
+
+errore = Y_hat-dati(:,3);
+
+figure(2)
+plot(dati(:,4),errore)
+grid on
+
+A=1;
+B=ones(1,7)/7;
+errore_mm=filter(B,A,errore);
+
+figure(4)
+plot(dati(:,4),errore_mm)
+grid on
