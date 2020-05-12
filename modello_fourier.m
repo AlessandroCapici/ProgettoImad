@@ -92,6 +92,9 @@ grid on
 A=1;
 B=ones(1,7)/7;
 errore_mm=filter(B,A,errore);
+%per tenere conto di picchi in prossimità a giorni di vacanza:
+%errore_mm_somma=[errore_mm(1:365)+errore_mm(366:end)];
+
 
 figure(4)
 plot(dati(:,4),errore_mm)
