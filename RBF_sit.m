@@ -1,7 +1,59 @@
-%% per non fare casino
-clear;
-clc;
-close all;
+clear
+close all
+clc
+warning('off','all')
+
+%% Caricamento dati
+load('caricoDEday.mat')
+dati = table2array(caricoDEday);
+
+x_vec = (1:size(dati,1))';
+dati =  [dati x_vec];
+%% Eliminazione dei NaN
+emptyRows=[];
+for i=dati(:,4)'
+    if isnan(dati(i,3))
+        emptyRows=[emptyRows i];
+    end
+end
+
+% Stimo i dati mancanti
+for i = emptyRows
+    dati(i,3)= (dati(i-7,3)+dati(i+7,3))/2;
+end
+
+%% Stima del trend lineare
+
+Phi = [ones(size(dati,1),1) dati(:,4)];
+thetaLS = Phi\dati(:,3);
+
+trend = Phi*thetaLS;
+figure(1)
+plot(dati(:,3),'o-')
+hold on
+plot(trend)
+grid on
+
+figure(2)
+plot(dati(:,3)-trend)
+grid on
+
+
+%% Trend come media annuale
+
+
+mean_year1 = mean(dati(1:365,3));
+mean_year2 = mean(dati(366:end,3));
+
+vec=[mean_year1*ones(365,1); mean_year2*ones(365,1)];
+
+dati1=dati;
+dati1(:,3) = dati1(:,3)-vec;
+
+figure(3)
+plot(dati1(:,3))
+grid on
+
 %% caricamento dati
 load('caricoDEday');
 load = table2array(caricoDEday);
@@ -20,18 +72,16 @@ for i=emptyRows
     load(i,:)=[]; 
 end
 %% variabili a caso
-giorni_anno = load(1:end,2);
-carico = load(1:end,3);
-x= (1:364);
-x= [x 1:364];
+giorni_anno = dati1(1:end,2);
+carico = dati1(1:end,3);
+x= (1:365);
+x= [x 1:365];
 x=x';
-carico_n = normalize(carico)';
+%carico_n = normalize(carico)';
+%%%%%%%%%
+carico_n=carico';
 n = length(carico);
 in=[x , giorni_anno]';
-
-in(1,:)=[1:364 1:364];
-in(3,1:364)=0.1;
-in(3,365:end)=0.2;
 
 %% Creo la rete neurale
 nnetwork=fitnet([10,8,5]);
@@ -67,7 +117,7 @@ mse_minimo=zeros(12,1);
 %creo array di network per poter tenere conto di network migliore
 nnetwork_array = cell(12,1);
 % mse_matrix terrà valori mse calcolati per ogni tipo di funzione
-mse_matrix (1:length(reti), 1:N)=100;
+mse_matrix (1:length(reti), 1:N)=1000000000;
 for iteratore_reti = 1:length(reti)
     if(iteratore_reti==1)
         fprintf('\t\t\t');
@@ -133,24 +183,21 @@ fprintf("modello peggiore:\t%s\t%s\t%s\n", mse_avg(riga_mse_massimo, :));
 %% cose a caso 
 
 
-carico_test=load(1:end,3);
-carico_test=normalize(carico_test)';
+carico_test=dati1(1:end,3);
+%carico_test=normalize(carico_test)';
+carico_test=(carico_test)';
 giorni_anno_test = load(1:end,2);
-x_test=(1:length(carico_test))';
-in_test=[x_test,giorni_anno_test]';
+%x_test=(1:length(carico_test))';
+%in_test=[x_test,giorni_anno_test]';
 
-in_test2 = zeros(3, 1092);
-in_test2(1,:)=[in(1,:) 1:364]
-in_test2(2,:)=[in(2,:) in(2,3:366)];
-in_test2(3,1:364) =0.1;
-in_test2(3,365:728)=0.2;
-in_test2(3,729:end)=0.3;
-
+in_test2 = zeros(2, 1095);
+in_test2(1,:)=[in(1,:) 1:365];
+in_test2(2,:)=[in(2,:) in(2,3:367)];
 
 
 % per trovare riga con mse minimo
 riga_mse_minimo=find (mse_minimo == min(mse_minimo));
-simulazione=sim(nnetwork_array{riga_mse_minimo}, in_test2);
+simulazione=sim(nnetwork_array{12}, in_test2);
 figure(1);
 grid on;
 hold on;
@@ -162,10 +209,22 @@ plot(carico_test);
 legend('simulazione','dati');
 % stampa di errore relativo
 subplot(2,1,2);
-errortraining= simulazione(1:728)-carico_n;
+errortraining= simulazione(1:730)-carico_n;
 plot (errortraining, 'black');
 title('errore modello migliore');
 legend('error training','error test');
+
+%% plot dati con trend
+
+trend_1095=[];
+trend_1095=[trend' (trend(1:365)')+(trend(730)-trend(1))];
+figure(6);
+title("YAY");
+plot(trend_1095+simulazione);
+hold on;
+plot(carico_test+trend');
+legend('simulazione', 'carico');
+
 
 %% stampa di modello peggiore (MSE massimo)
 % per trovare riga con mse minimo
@@ -181,7 +240,7 @@ hold on;
 plot(carico_test);
 legend('simulazione','dati');
 % stampa di errore relativo
-errortraining= simulazione1(1:728)-carico_n;
+errortraining= simulazione1(1:730)-carico_n;
 subplot(2,1,2);
 plot (errortraining, 'black');
 title('errore modello peggiore');
