@@ -106,7 +106,7 @@ reti = {'trainlm', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 't
 % devo fare loop N volte per trovare array MSE di ciascun tipo di funzione
 
 %%%% N SPECIFICA NUMERO DI ITERAZIONI. N BASSO FA BENE ALLA SALUTE DEL PC
-N=2; %non impostarlo a 1. non gli piace
+N=4; %non impostarlo a 1. non gli piace
 %%%% 
 
 % variabili di servizio
