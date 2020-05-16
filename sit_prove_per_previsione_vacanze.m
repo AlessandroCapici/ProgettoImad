@@ -10,8 +10,8 @@ warning('off','all')
 %% festività tedesche, grossomodo
 % https://www.studying-in-germany.org/public-holidays-germany/
 vacanze=zeros(365,1);
-%%                   1/01  6/01, 24/02, 10/03, 13/03, 1/05, 10/05, 21/05, 30/05, 1/06, 11/06, 15/08, 19/09, 3/10, 31/10, 1/11, 18/11, 25/12
-giorni_vacanze = [   1,   6,    55,  130,   141,    151,   152,  162,   227,   262,   276,  304,   305,  322,   359];
+%%                   1/01  6/01, 24/02, 10/03, 13/03, 1/05, 10/05, 21/05, 30/05, 11/06, 15/08, 19/09, 3/10, 31/10, 18/11, 25/12
+giorni_vacanze = [   1,   6,    55,  130,   141,    151,  162,   227,   262,   276,  304,  322,   359];
 %rimosso quelli che facevano casini sono 100 103 114 121
 vacanze (giorni_vacanze) = 1;
 
@@ -90,27 +90,14 @@ Phi_p =  [ones(n,1) ...
 Y_hat = Phi_p * thetaLS;
 
 figure(1)
-
 plot(dati(:,4),dati(:,3))
 hold on
 plot(dati(:,4),Y_hat)
 grid on
 legend('Dati','Stima')
+title('dati normalizzati e modello')
 
 
-
-
-%% serve per tagliare dati in range di giorni 14:356
-%{
-dati_fighi=dati;
-rowsToDelete=zeros(730,1)+1;
-for i=dati(:,4)'
-   if dati(i,1)<14 || dati(i,1)>356
-       rowsToDelete(i)=0;
-   end
-end
-dati(:,3)=rowsToDelete.*dati(:,3);
-%}
 
 errore = Y_hat-dati(:,3);
 %devo limitare range di errore tra 14 e 356
@@ -125,6 +112,7 @@ errore=rowsToDelete.*errore;
 figure(2)
 plot(dati(:,4),errore)
 grid on
+title('dati - modello in range [14:356]');
 
 A=1;
 B=ones(1,7)/7;
@@ -134,15 +122,11 @@ errore_mm_somma=[errore_mm(1:365)+errore_mm(366:end)];
 %per girare l'errore dato che ora sono invertiti
 errore_mm_somma = -errore_mm_somma;
 figure(3);
-title("media mobile di errore su finestra di 7 giorni");
-plot (errore_mm_somma);
+plot (errore_mm_somma)
+title("mm finestra di 7 giorni su errori sommati tra due anni");
 %per pulire dati sostituisco con 0 elementi che meno si allontanano.
 errore_mm_somma_pulito = zeros(365,1);
 
-
-figure(4)
-plot(dati(:,4),errore_mm)
-grid on
 
 for i = 1:365
     if (abs(errore_mm_somma(i)) < 0.1)
@@ -192,7 +176,8 @@ for i = 1: length(per_fare_una_media_appiattito)
     if inizio==0 && errore_con_medie(i)<0
         inizio=i;
     end
-    if inizio ~= 0 && vacanze_effettive(i)~=0 
+    if inizio ~= 0 && vacanze_effettive(i)~=0
+        fprintf("trovato vacanza in %i\n",i);
         flag=true;
     end
     if inizio ~= 0 && errore_con_medie(i) ==0 && flag == false
@@ -200,8 +185,13 @@ for i = 1: length(per_fare_una_media_appiattito)
         inizio = 0;
         flag = false;
     end
+    if inizio~= 0 && errore_con_medie(i) ==0 && flag == true
+        inizio=0;
+    end
 end
-errore_con_medie=per_fare_una_media_appiattito;
+
+
+%errore_con_medie=per_fare_una_media_appiattito;
 
 
 %{
@@ -234,16 +224,18 @@ hold on;
 plot (vacanze, "black"); 
 hold on; 
 plot(errore_mm_somma, "b"); 
-legend("vacanze", "tutte vacanze", "errore" );
+legend("vacanze che corrispondono", "tutte vacanze", "errore" )
+title('ricerca di vacanze che corrispondono a picchi negativi');
 
 
 figure(6);
 plot(errore_mm_somma);
 hold on;
-plot(errore_mm_somma_pulito);
+plot(vacanze_effettive);
 hold on;
 plot(errore_con_medie, "black");
-legend("errore", "errore pulito", "errore con medie");
+legend("errore", "vacanze che corrispondono", "errore con medie")
+title("calcolo media di errori nel intervallo di inizio:fine vacanza");
 
 
 %% parte in cui cerco di incollare stime (Y_hat) e errore e valutare migliorie
@@ -262,10 +254,11 @@ mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
 
 mean_iniziale = mean(errore_iniziale_minore_di_0);
 mean_finale=mean(errore_finale_minore_di_0);
-
-figure(7);
-plot(dati(:,3));
-hold on;
-plot(Y_hat_new);
-legend("dati","stima giusta");
+sl
+figure(7)
+title("ciao mondo")
+plot(dati(:,3))
+hold on
+plot(Y_hat_new)
+legend("dati","stima giusta")
 
