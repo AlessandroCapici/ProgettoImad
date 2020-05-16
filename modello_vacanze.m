@@ -35,14 +35,10 @@ vec=[mean_year1*ones(365,1); mean_year2*ones(365,1)];
 dati_detrendizzati=dati;
 dati_detrendizzati(:,3) = dati_detrendizzati(:,3)-vec;
 
-figure(1)
-plot(dati_detrendizzati(:,3))
-grid on
-
 %% Tengo solo le vacanze di Natale
 rowsToDelete = [];
 for i=dati_detrendizzati(:,4)'
-   if dati_detrendizzati(i,1)>14 && dati_detrendizzati(i,1)<356
+   if dati_detrendizzati(i,1)>7 && dati_detrendizzati(i,1)<356
        rowsToDelete = [rowsToDelete i];
    end
 end
@@ -53,24 +49,24 @@ for j = rowsToDelete
      dati_detrendizzati(j,:)=[];
 end
 
-vect=[1:48]' ;
-
+vect=[1:34]' ;
+i=8;
+f=24;
 dati1=[dati_detrendizzati(:,3) vect];
 
-figure(2)
-plot(dati1(:,2), dati1(:,1));
+figure(1)
+plot(dati1(i:f,2), dati1(i:f,1));
+hold on
+grid on
 
-dati_n=normalize(dati_detrendizzati(:,3));
+col=2;
 
 %% Proviamo con un modello polinomiale
-q=5;
 x=vect;
-Phi=[ones(48,1) x x.^2 x.^3 x.^4 x.^5 x.^6 x.^7 x.^8 x.^9 x.^10];
-[thetaLS,var_theta,SSR] = stimaLS(dati_n,Phi);
+Phi=[ones(f-i+1,1)  x(i:f) x(i:f).^2  ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
-figure(3)
-plot(dati1(:,2), dati1(:,1));
-hold on
-plot(x,carico_hat);
-
-
+plot(x(i:f),carico_hat);
