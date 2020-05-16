@@ -123,3 +123,39 @@ figure(3)
 plot(dati_new(:,4), dati_new(:,3))
 
 %% Stima dell'andamento annuale usando i dat a cui e' stato tolto l'andamento settimanale
+
+i=1;
+f=350;
+
+mdl1 = stepwiselm(dati_new(i:f,4),dati_new(i:f,3),'poly5');
+figure(4)
+plot(mdl1) %funzione trovata '1 + x1 + x1^2 + x1^3 + x1^4'
+
+mdl2 = stepwiselm(dati_new(f:end,4),dati_new(f:end,3),'poly5');
+figure(5)
+plot(mdl2) %funzione trovata '1 + x1 + x1^2 + x1^3'
+
+Phi_anno1 = [ones(f,1) dati_new(i:f,4) dati_new(i:f,4).^2 dati_new(i:f,4).^3 dati_new(i:f,4).^4 ]; %secondo anno
+[N,q]=size(Phi_anno1);
+[thetaLS,var_theta,SSR] = stimaLS(dati(i:f,3),Phi_anno1);
+stimaanno1 = Phi_anno1*thetaLS;
+
+Phi_anno2 = [ones(f,1) dati_new(f+1:end,4) dati_new(f+1:end,4).^2 dati_new(f+1:end,4).^3 ]; %secondo anno
+[N,q]=size(Phi_anno2);
+[thetaLS,var_theta,SSR] = stimaLS(dati(f+1:end,3),Phi_anno2);
+stimaanno2 = Phi_anno2*thetaLS;
+
+stimatot=[stimaanno1;stimaanno2];
+figure(4)
+plot(dati_new(:,4), dati_new(:,3),'o-')
+grid on
+hold on
+plot(dati_new(:,4),stimatot)
+
+supermegastima=stima+stimatot;
+figure(5)
+plot(dati(:,4), dati(:,3),'o-')
+grid on
+hold on
+plot(dati(:,4),supermegastima)
+
