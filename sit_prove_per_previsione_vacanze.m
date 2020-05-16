@@ -272,10 +272,12 @@ mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
 
 mean_iniziale = mean(errore_iniziale_minore_di_0);
 mean_finale=mean(errore_finale_minore_di_0);
+
+
 figure(8)
-title("ciao mondo")
 plot(dati(:,3))
 hold on
 plot(Y_hat_new)
 legend("dati","stima giusta")
+title("modello finito con vacanze 'in mezzo'");
 
