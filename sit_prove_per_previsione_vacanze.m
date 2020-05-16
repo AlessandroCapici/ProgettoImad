@@ -177,7 +177,6 @@ for i = 1: length(per_fare_una_media_appiattito)
         inizio=i;
     end
     if inizio ~= 0 && vacanze_effettive(i)~=0
-        fprintf("trovato vacanza in %i\n",i);
         flag=true;
     end
     if inizio ~= 0 && errore_con_medie(i) ==0 && flag == false
@@ -187,11 +186,22 @@ for i = 1: length(per_fare_una_media_appiattito)
     end
     if inizio~= 0 && errore_con_medie(i) ==0 && flag == true
         inizio=0;
+        flag=false;
     end
 end
 
+figure(4)
+plot(errore_con_medie, "blue")
+hold on
+plot(per_fare_una_media_appiattito, "green", "LineWidth", 2);
+hold on
+plot(vacanze_effettive)
+title("errore medio solo in prossimità di vacanze effettive");
 
-%errore_con_medie=per_fare_una_media_appiattito;
+
+errore_con_medie=per_fare_una_media_appiattito;
+
+
 
 
 %{
@@ -241,6 +251,14 @@ title("calcolo media di errori nel intervallo di inizio:fine vacanza");
 %% parte in cui cerco di incollare stime (Y_hat) e errore e valutare migliorie
 errore_usabile=errore_con_medie/2; %perchè ho sommato due errori prima
 errore_usabile=[errore_usabile' (errore_con_medie/2)']';
+
+figure(7)
+plot(-errore); 
+hold on; 
+plot(errore_usabile);
+legend("errore", "modello dell'errore")
+title("confronto tra errore e modello");
+
 Y_hat_new=Y_hat+errore_usabile;
 %prendo dati - Y_hat_new e considero solo parte in cui questo è<0 (quelli
 %corrispondenti a>0 sono causati da sovraproduzione e non sottoproduzione)
@@ -254,8 +272,7 @@ mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
 
 mean_iniziale = mean(errore_iniziale_minore_di_0);
 mean_finale=mean(errore_finale_minore_di_0);
-sl
-figure(7)
+figure(8)
 title("ciao mondo")
 plot(dati(:,3))
 hold on
