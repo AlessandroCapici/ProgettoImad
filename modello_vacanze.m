@@ -55,18 +55,135 @@ f=24;
 dati1=[dati_detrendizzati(:,3) vect];
 
 figure(1)
-plot(dati1(i:f,2), dati1(i:f,1));
+plot(dati1(i:f,2), dati1(i:f,1),'LineWidth',2);
 hold on
 grid on
 
 col=2;
 
-%% Proviamo con un modello polinomiale
+%% Proviamo con un modello lineare
+q=1;
+n=16;
+matrice_validazione=zeros(6,3);
 x=vect;
-Phi=[ones(f-i+1,1)  x(i:f) x(i:f).^2  ...
+Phi=[ones(f-i+1,1) x(i:f)  ...
     cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
     cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
     cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(1,1)=FPE;
+matrice_validazione(1,2)=AIC;
+matrice_validazione(1,3)=MDL;
+%plot(x(i:f),carico_hat);
+
+
+%% Proviamo con un modello quadratico
+q=2;
+n=16;
+x=vect;
+Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2  ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(2,1)=FPE;
+matrice_validazione(2,2)=AIC;
+matrice_validazione(2,3)=MDL;
+%plot(x(i:f),carico_hat);
+
+%% Proviamo con un modello cubico
+q=3;
+n=16;
+x=vect;
+Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(3,1)=FPE;
+matrice_validazione(3,2)=AIC;
+matrice_validazione(3,3)=MDL;
+%plot(x(i:f),carico_hat);
+
+%% Proviamo con un modello di quarto grado
+q=2;
+n=16;
+x=vect;
+Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(4,1)=FPE;
+matrice_validazione(4,2)=AIC;
+matrice_validazione(4,3)=MDL;
+%plot(x(i:f),carico_hat);
+
+%% Proviamo con un modello di quinto grado
+q=5;
+n=16;
+x=vect;
+Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5 ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(5,1)=FPE;
+matrice_validazione(5,2)=AIC;
+matrice_validazione(5,3)=MDL;
 plot(x(i:f),carico_hat);
+
+%% Proviamo con un modello di sesto grado
+q=6;
+n=16;
+x=vect;
+Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5 x(i:f).^6 ...
+    cos(dati_detrendizzati(i:f,2)*2*pi/7) sin(dati_detrendizzati(i:f,2)*2*pi/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*2/7) sin(dati_detrendizzati(i:f,2)*2*pi*2/7)...
+    cos(dati_detrendizzati(i:f,2)*2*pi*3/7) sin(dati_detrendizzati(i:f,2)*2*pi*3/7)];
+[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS;
+FPE=((n+q)/(n-q)*SSR);
+AIC=2*q/n+log(SSR);
+MDL=log(n)*q/n+log(SSR);
+matrice_validazione(6,1)=FPE;
+matrice_validazione(6,2)=AIC;
+matrice_validazione(6,3)=MDL;
+%plot(x(i:f),carico_hat);
+
+figure(2)
+grid on
+plot(dati(1:6,4),matrice_validazione(:,1))
+
+figure(3)
+grid on
+plot(dati(1:6,4),matrice_validazione(:,2))
+
+figure(4)
+grid on
+plot(dati(1:6,4),matrice_validazione(:,3))
+
+%FPE minimo per il modello di quinto grado
+%AIC minimo per il modello di quinto grado
+%MDL minimo per il modello di quarto grado
+
