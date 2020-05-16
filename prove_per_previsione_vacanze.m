@@ -3,7 +3,8 @@ close all
 clc
 warning('off','all')
 
-%% modellino usa l'array sotto per stabilire giorni di vacanza e li sovrappone a dati su errore dati meno stima
+%% modellino usa l'array sotto per stabilire giorni di vacanza e li sovrappone all'errore
+%% (errore trovato come dati detrendizzati meno stima calcolata 
 %% per trovare giorni effettivi di vacanza. poi calcola media di errore su quel intervallo
 
 %% festività tedesche, grossomodo
@@ -114,12 +115,17 @@ plot (errore_mm_somma);
 %per pulire dati sostituisco con 0 elementi che meno si allontanano.
 errore_mm_somma_pulito = zeros(365,1);
 
+
+figure(4)
+plot(dati(:,4),errore_mm)
+grid on
+
 for i = 1:365
-    if (abs(errore_mm_somma(i)) < 0.2)
+    if (abs(errore_mm_somma(i)) < 0.1)
         errore_mm_somma_pulito(i)=0;
         continue;
     end
-    if(errore_mm_somma(i) < -0.2)
+    if(errore_mm_somma(i) < -0.1)
         errore_mm_somma_pulito(i)=1;
     end
 end
@@ -172,6 +178,25 @@ plot(errore_con_medie, "black");
 legend("errore", "errore pulito", "errore con medie");
 
 
-figure(4)
-plot(dati(:,4),errore_mm)
-grid on
+%% parte in cui cerco di incollare stime (Y_hat) e errore e valutare migliorie
+errore_usabile=errore_con_medie/2; %perchè ho sommato due errori prima
+errore_usabile=[errore_usabile' (errore_con_medie/2)']';
+Y_hat_new=Y_hat+errore_usabile;
+%prendo dati - Y_hat_new e considero solo parte in cui questo è<0 (quelli
+%corrispondenti a>0 sono causati da sovraproduzione e non sottoproduzione)
+errore_finale=dati(:,3)-Y_hat_new;
+errore_finale_minore_di_0 = errore_finale.*double(errore_finale<0);
+%calcolo la media dell'errore iniziale considerando solo picchi negativi
+errore_iniziale_minore_di_0=errore.*double(errore<0);
+mse_iniziale = immse(errore_iniziale_minore_di_0, zeros(730,1));
+mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
+
+mean_iniziale = mean(errore_iniziale_minore_di_0);
+mean_finale=mean(errore_finale_minore_di_0);
+
+figure(7);
+plot(dati(:,3));
+hold on;
+plot(Y_hat_new);
+legend("dati","stima giusta");
+
