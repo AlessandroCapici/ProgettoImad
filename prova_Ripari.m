@@ -83,19 +83,19 @@ for i=emptyRows2
     dati(i,:)=[]; 
 end 
 
-x=dati(1:261,1);
-y=dati(1:261,2);
+x1=dati(1:261,1);
+y1=dati(1:261,2);
 
-funct=[x y x.^2 y.^2 x.*y x.^3 y.^3 (x.^2).*y x.*(y.^2)];
+funct=[x1 y1 x1.^2 y1.^2 x1.*y1 x1.^3 y1.^3 (x1.^2).*y1 x1.*(y1.^2)];
 mdl1 = stepwiselm(funct,carico_n(1:261))
 figure(3)
 plot(mdl1);
 
 %% predizione
-x=dati(1:end,1);
-y=dati(1:end,2);
+x1=dati(1:end,1);
+y1=dati(1:end,2);
 
-Phi=[x y x.^2 y.^2 x.*y x.^3 y.^3 (x.^2).*y x.*(y.^2)];
+Phi=[x1 y1 x1.^2 y1.^2 x1.*y1 x1.^3 y1.^3 (x1.^2).*y1 x1.*(y1.^2)];
 prediction=predict(mdl1,Phi);
 figure(4);
 plot(dati_n(:,3),'o-')
