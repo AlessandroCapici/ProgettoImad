@@ -174,14 +174,17 @@ matrice_validazione(6,3)=MDL;
 figure(2)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,1))
+title('fpe')
 
 figure(3)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,2))
+title('aic')
 
 figure(4)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,3))
+title('mdl')
 
 %FPE minimo per il modello di quinto grado
 %AIC minimo per il modello di quinto grado

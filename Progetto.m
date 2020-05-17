@@ -98,7 +98,7 @@ title('Dati senza vacanze di Natale')
 % 
 % save ./salvataggi/prova7.mat fpe aic mdl SSRv q 
 
-%% Prova con polinomi per l'andamento annuale
+%% Stima del modello settimanale
 
 
 Phi_tutto = [cos(2*pi*dati(:,2)/7) sin(2*pi*dati(:,2)/7)...
@@ -125,27 +125,27 @@ plot(dati_new(:,4), dati_new(:,3))
 %% Stima dell'andamento annuale usando i dat a cui e' stato tolto l'andamento settimanale
 
 i=1;
-f=350;
+f=700;
 
-mdl1 = stepwiselm(dati_new(i:f,4),dati_new(i:f,3),'poly5');
+mdl1 = stepwiselm(dati_new(i:f,1),dati_new(i:f,3),'poly5','Criterion','aic');
 figure(4)
 plot(mdl1) %funzione trovata '1 + x1 + x1^2 + x1^3 + x1^4'
 
-mdl2 = stepwiselm(dati_new(f:end,4),dati_new(f:end,3),'poly5');
-figure(5)
-plot(mdl2) %funzione trovata '1 + x1 + x1^2 + x1^3'
 
-Phi_anno1 = [ones(f,1) dati_new(i:f,4) dati_new(i:f,4).^2 dati_new(i:f,4).^3 dati_new(i:f,4).^4 ]; %secondo anno
+
+Phi_anno1 = [ones(f,1) dati_new(i:f,1) dati_new(i:f,1).^2 dati_new(i:f,1).^3]; %primo anno
 [N,q]=size(Phi_anno1);
 [thetaLS,var_theta,SSR] = stimaLS(dati(i:f,3),Phi_anno1);
 stimaanno1 = Phi_anno1*thetaLS;
+[fpe,aic,mdl] = test(N,q,SSR);
+% Il terzo grado è la nostra scelta definitiva
 
-Phi_anno2 = [ones(f,1) dati_new(f+1:end,4) dati_new(f+1:end,4).^2 dati_new(f+1:end,4).^3 ]; %secondo anno
-[N,q]=size(Phi_anno2);
-[thetaLS,var_theta,SSR] = stimaLS(dati(f+1:end,3),Phi_anno2);
-stimaanno2 = Phi_anno2*thetaLS;
+% Phi_anno2 = [ones(f,1) dati_new(f+1:end,4) dati_new(f+1:end,4).^2 dati_new(f+1:end,4).^3 ]; %secondo anno
+% [N,q]=size(Phi_anno2);
+% [thetaLS,var_theta,SSR] = stimaLS(dati(f+1:end,3),Phi_anno2);
+% stimaanno2 = Phi_anno2*thetaLS;
 
-stimatot=[stimaanno1;stimaanno2];
+stimatot=stimaanno1;
 figure(4)
 plot(dati_new(:,4), dati_new(:,3),'o-')
 grid on
