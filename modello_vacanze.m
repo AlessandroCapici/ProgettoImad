@@ -20,7 +20,8 @@ end
 for i = emptyRows
     dati(i,3)= (dati(i-7,3)+dati(i+7,3))/2;
 end
-
+figure(1)
+plot(dati(:,4), dati(:,3))
 %% Normalizzo i dati
 sd = std(dati(:,3));
 dati(:,3)=(1/sd)*dati(:,3);
@@ -34,7 +35,8 @@ vec=[mean_year1*ones(365,1); mean_year2*ones(365,1)];
 
 dati_detrendizzati=dati;
 dati_detrendizzati(:,3) = dati_detrendizzati(:,3)-vec;
-
+figure(2)
+plot(dati_detrendizzati(:,4), dati_detrendizzati(:,3))
 %% Tengo solo le vacanze di Natale
 rowsToDelete = [];
 for i=dati_detrendizzati(:,4)'
@@ -54,7 +56,7 @@ i=8;
 f=24;
 dati1=[dati_detrendizzati(:,3) vect];
 
-figure(1)
+figure(3)
 plot(dati1(i:f,2), dati1(i:f,1),'LineWidth',2);
 hold on
 grid on
@@ -171,17 +173,17 @@ matrice_validazione(6,2)=AIC;
 matrice_validazione(6,3)=MDL;
 %plot(x(i:f),carico_hat);
 
-figure(2)
+figure(4)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,1))
 title('fpe')
 
-figure(3)
+figure(5)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,2))
 title('aic')
 
-figure(4)
+figure(6)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,3))
 title('mdl')
