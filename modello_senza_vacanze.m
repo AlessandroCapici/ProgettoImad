@@ -1,3 +1,7 @@
+% Script che calcola i parametri dei modelli e li salva in un file che poi
+% viene usato dalla funzione prediz.
+% La complessità e il tipo di modello sono state scelte nel file Progetto.m
+
 close all
 clear
 
@@ -7,7 +11,7 @@ dati = table2array(caricoDEday);
 
 x_vec = (1:size(dati,1))';
 dati =  [dati x_vec];
-%% Eliminazione dei NaN
+%% Eliminazione dei NaN e stima dei dati mancanti
 emptyRows=[];
 for i=dati(:,4)'
     if isnan(dati(i,3))
@@ -20,9 +24,16 @@ for i = emptyRows
     dati(i,3)= (dati(i-7,3)+dati(i+7,3))/2;
 end
 
+%% De-trendizzazione
 mean_year1 = mean(dati(1:365,3));
 mean_year2 = mean(dati(366:end,3));
 
+% Abbiamo supposto che la media fosse in crescita anche per il terzo anno,
+% quello su cui vengono fatte le previsioni. Inoltre abbiamo supposto che
+% la crescita tra il secondo e il terzo anno fosse uguale alla crescita tra
+% il primo e il secondo anno.
+% Sapendo la media dei consumi del terzo anno sarebbe possibile sostituirla
+% alla meedia calcolata da noi e ottenere delle previsioni migliori.
 mean_year3 = mean_year2 + (mean_year2-mean_year1);
 media = mean_year3;
 

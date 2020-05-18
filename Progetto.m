@@ -1,3 +1,7 @@
+% In questo script abbiamo fatto varie prove per stimare l'andamento del
+% modello, escludendo le vacanze di Natale per le quali abbiamo deciso di
+% fare un modello a parte.
+
 clear
 close all
 clc
@@ -21,6 +25,9 @@ for i = emptyRows
     dati(i,3)= (dati(i-7,3)+dati(i+7,3))/2;
 end
 
+%% De-trendizzazione e normalizzazione
+% Ad ogni anno sottraiamo la media annuale calcolata su quell'anno
+
 mean_year1 = mean(dati(1:365,3));
 mean_year2 = mean(dati(366:end,3));
 
@@ -28,7 +35,6 @@ vec=[mean_year1*ones(365,1); mean_year2*ones(365,1)];
 
 dati(:,3) = dati(:,3)-vec;
 
-%% Normalizzo i dati
 sd = std(dati(:,3));
 dati(:,3)=(1/sd)*dati(:,3);
 
@@ -54,6 +60,13 @@ grid on
 title('Dati senza vacanze di Natale')
 
 %% Prova dei modelli
+% Abbiamo provato a stimare modelli con le serie di Fourier, e abbiamo
+% usato sia la cross-validazione sia i criteri oggettivi per scegliere la
+% complessità del modello. L'uso delle serie di Fourier ci ha soddisfatto
+% per quanto riguarda l'andamento settimanale, mentre per l'andamento
+% annuale non siamo riusciti a ottenere andamenti che seguissero bene i
+% dati
+
 % i=1;
 % f=350;
 % 
@@ -99,7 +112,9 @@ title('Dati senza vacanze di Natale')
 % save ./salvataggi/prova7.mat fpe aic mdl SSRv q 
 
 %% Stima del modello settimanale
-
+% Stimiamo solo l'andamento settimanale usando le serie di Fourier, e poi
+% lo sottraiamo ai dati. Useremo i dati ripuliti dall'andamento settimanale
+% per ottenrere l'andamento annuale.
 
 Phi_tutto = [cos(2*pi*dati(:,2)/7) sin(2*pi*dati(:,2)/7)...
     cos(2*pi*dati(:,2)*2/7) sin(2*pi*dati(:,2)*2/7)...
@@ -127,12 +142,15 @@ plot(dati_new(:,4), dati_new(:,3))
 i=1;
 f=700;
 
+% Abbiamo usato la funzione stepwise di matlab per avere un'idea della
+% complessità del modello da usare, ma poi abbiamo fatto delle prove a mano
+% per fare la scelta definitva
 mdl1 = stepwiselm(dati_new(i:f,1),dati_new(i:f,3),'poly5','Criterion','aic');
 figure(4)
 plot(mdl1) %funzione trovata '1 + x1 + x1^2 + x1^3 + x1^4'
 
 
-
+% In realtà la stima viene fatta su entrambi gli anni ora
 Phi_anno1 = [ones(f,1) dati_new(i:f,1) dati_new(i:f,1).^2 dati_new(i:f,1).^3]; %primo anno
 [N,q]=size(Phi_anno1);
 [thetaLS,var_theta,SSR] = stimaLS(dati(i:f,3),Phi_anno1);
@@ -140,10 +158,6 @@ stimaanno1 = Phi_anno1*thetaLS;
 [fpe,aic,mdl] = test(N,q,SSR);
 % Il terzo grado è la nostra scelta definitiva
 
-% Phi_anno2 = [ones(f,1) dati_new(f+1:end,4) dati_new(f+1:end,4).^2 dati_new(f+1:end,4).^3 ]; %secondo anno
-% [N,q]=size(Phi_anno2);
-% [thetaLS,var_theta,SSR] = stimaLS(dati(f+1:end,3),Phi_anno2);
-% stimaanno2 = Phi_anno2*thetaLS;
 
 stimatot=stimaanno1;
 figure(4)
