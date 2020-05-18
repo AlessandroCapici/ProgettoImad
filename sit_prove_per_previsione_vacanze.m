@@ -11,9 +11,9 @@ warning('off','all')
 % https://www.studying-in-germany.org/public-holidays-germany/
 vacanze=zeros(365,1);
 %%                   1/01  6/01, 24/02, 10/03, 13/03, 1/05, 10/05, 21/05, 30/05, 11/06, 15/08, 19/09, 3/10, 31/10, 18/11, 25/12
-giorni_vacanze = [   1,   6,    55,  130,   141,    151,  162,   227,   262,   276,  304,  322,   359];
-%rimosso quelli che facevano casini sono 100 103 114 121
-vacanze (giorni_vacanze) = 1;
+giorni_vacanze = [   1,   6,    55,  130,   141,    151,  162,   227,   262,   304,  322,   359];
+%rimosso quelli che facevano casini sono 100 103 114 121 276
+vacanze (giorni_vacanze) = 1; 
 
 
 %% Caricamento dati
@@ -92,7 +92,7 @@ Y_hat = Phi_p * thetaLS;
 figure(1)
 plot(dati(:,4),dati(:,3))
 hold on
-plot(dati(:,4),Y_hat)
+plot(dati(:,4),Y_hat, "LineWidth", 2)
 grid on
 legend('Dati','Stima')
 title('dati normalizzati e modello')
@@ -103,7 +103,7 @@ errore = Y_hat-dati(:,3);
 %devo limitare range di errore tra 14 e 356
 rowsToDelete=zeros(730,1)+1; %vettore di 1
 for i=dati(:,4)'
-   if dati(i,1)<14 || dati(i,1)>356
+   if dati(i,1)<7 || dati(i,1)>356
        rowsToDelete(i)=0; %imposto righe da eliminare in posizione i a 0
    end
 end
@@ -264,20 +264,26 @@ Y_hat_new=Y_hat+errore_usabile;
 %corrispondenti a>0 sono causati da sovraproduzione e non sottoproduzione)
 errore_finale=dati(:,3)-Y_hat_new;
 errore_finale=errore_finale.*rowsToDelete;
+
+
+%{
+% non ho sinceramente idea perchè ho fatto sta cosa 
+%avevo dimenticato di girare l'errore quindi mi pescava non roba < 0 ma
+%roba > 0 e quello compariva come MSE iniziale, che ovviamente era più basso
 errore_finale_minore_di_0 = errore_finale.*double(errore_finale<0);
 %calcolo la media dell'errore iniziale considerando solo picchi negativi
-errore_iniziale_minore_di_0=errore.*double(errore<0);
+errore_iniziale_minore_di_0=-errore.*double(errore<0);
 mse_iniziale = immse(errore_iniziale_minore_di_0, zeros(730,1));
 mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
-
-mean_iniziale = mean(errore_iniziale_minore_di_0);
-mean_finale=mean(errore_finale_minore_di_0);
+%}
+mse_iniziale_=immse(errore, zeros(730,1));
+mse_finale_=immse(errore_finale, zeros(730,1))
 
 
 figure(8)
 plot(dati(:,3))
 hold on
-plot(Y_hat_new)
+plot(Y_hat_new, "LineWidth", 2)
 legend("dati","stima giusta")
 title("modello finito con vacanze 'in mezzo'");
 
