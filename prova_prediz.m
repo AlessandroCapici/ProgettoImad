@@ -1,4 +1,4 @@
 clear
 close all
-
-s_hat = prediz(100,1)
+clc 
+s_hat = prediz(359,1)

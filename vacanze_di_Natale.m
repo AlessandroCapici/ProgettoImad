@@ -51,13 +51,11 @@ for j = rowsToDelete
      dati_detrendizzati(j,:)=[];
 end
 
-vect=[1:34]' ;
+figure(3)
 i=8;
 f=24;
-dati1=[dati_detrendizzati(:,3) vect];
-
-figure(3)
-plot(dati1(i:f,2), dati1(i:f,1),'LineWidth',2);
+x=[1:17]';
+plot(x, dati_detrendizzati(i:f,3),'LineWidth',2);
 hold on
 grid on
 
@@ -65,8 +63,7 @@ grid on
 q=2;
 n=16;
 matrice_validazione=zeros(6,3);
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f)];
+Phi=[ones(17,1) x];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
 FPE=((n+q)/(n-q)*SSR);
@@ -81,23 +78,21 @@ matrice_validazione(1,3)=MDL;
 %% Proviamo con un modello quadratico
 q=3;
 n=16;
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2];
-[thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
-carico_hat=Phi*thetaLS;
+Phi=[ones(17,1) x x.^2];
+[thetaLS_vacanze,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
+carico_hat=Phi*thetaLS_vacanze;
 FPE=((n+q)/(n-q)*SSR);
 AIC=2*q/n+log(SSR);
 MDL=log(n)*q/n+log(SSR);
 matrice_validazione(2,1)=FPE;
 matrice_validazione(2,2)=AIC;
 matrice_validazione(2,3)=MDL;
-plot(x(i:f),carico_hat);
+plot(x,carico_hat);
 
 %% Proviamo con un modello cubico
 q=4;
 n=16;
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3];
+Phi=[ones(17,1) x x.^2 x.^3];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
 FPE=((n+q)/(n-q)*SSR);
@@ -111,8 +106,7 @@ matrice_validazione(3,3)=MDL;
 %% Proviamo con un modello di quarto grado
 q=5;
 n=16;
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4];
+Phi=[ones(17,1) x x.^2 x.^3 x.^4];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
 FPE=((n+q)/(n-q)*SSR);
@@ -126,8 +120,7 @@ matrice_validazione(4,3)=MDL;
 %% Proviamo con un modello di quinto grado
 q=6;
 n=16;
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5];
+Phi=[ones(17,1) x x.^2 x.^3 x.^4 x.^5];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
 FPE=((n+q)/(n-q)*SSR);
@@ -141,8 +134,7 @@ matrice_validazione(5,3)=MDL;
 %% Proviamo con un modello di sesto grado
 q=7;
 n=16;
-x=vect;
-Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5 x(i:f).^6];
+Phi=[ones(17,1) x x.^2 x.^3 x.^4 x.^5 x.^6];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
 FPE=((n+q)/(n-q)*SSR);
@@ -167,3 +159,6 @@ figure(6)
 grid on
 plot(dati(1:6,4),matrice_validazione(:,3))
 title('mdl')
+
+
+save parametri_modello_vacanzeNatale.mat thetaLS_vacanze
