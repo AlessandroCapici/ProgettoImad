@@ -64,7 +64,7 @@ grid on
 col=2;
 
 %% Proviamo con un modello lineare
-q=1;
+q=8;
 n=16;
 matrice_validazione=zeros(6,3);
 x=vect;
@@ -84,7 +84,7 @@ matrice_validazione(1,3)=MDL;
 
 
 %% Proviamo con un modello quadratico
-q=2;
+q=9;
 n=16;
 x=vect;
 Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2  ...
@@ -102,7 +102,7 @@ matrice_validazione(2,3)=MDL;
 %plot(x(i:f),carico_hat);
 
 %% Proviamo con un modello cubico
-q=3;
+q=10;
 n=16;
 x=vect;
 Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 ...
@@ -120,7 +120,7 @@ matrice_validazione(3,3)=MDL;
 %plot(x(i:f),carico_hat);
 
 %% Proviamo con un modello di quarto grado
-q=2;
+q=11;
 n=16;
 x=vect;
 Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 ...
@@ -138,7 +138,7 @@ matrice_validazione(4,3)=MDL;
 %plot(x(i:f),carico_hat);
 
 %% Proviamo con un modello di quinto grado
-q=5;
+q=12;
 n=16;
 x=vect;
 Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5 ...
@@ -156,7 +156,7 @@ matrice_validazione(5,3)=MDL;
 plot(x(i:f),carico_hat);
 
 %% Proviamo con un modello di sesto grado
-q=6;
+q=13;
 n=16;
 x=vect;
 Phi=[ones(f-i+1,1) x(i:f) x(i:f).^2 x(i:f).^3 x(i:f).^4 x(i:f).^5 x(i:f).^6 ...
