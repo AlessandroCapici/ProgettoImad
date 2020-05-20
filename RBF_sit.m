@@ -6,10 +6,11 @@ warning('off','all')
 %% Caricamento dati
 load('caricoDEday.mat')
 dati = table2array(caricoDEday);
-
 x_vec = (1:size(dati,1))';
 dati =  [dati x_vec];
-%% Eliminazione dei NaN
+
+%% Eliminazione dei NaN;
+% NaN diventa valore medio tra dato della settimana precedente e successiva 
 emptyRows=[];
 for i=dati(:,4)'
     if isnan(dati(i,3))
@@ -17,26 +18,28 @@ for i=dati(:,4)'
     end
 end
 
-% Stimo i dati mancanti
 for i = emptyRows
     dati(i,3)= (dati(i-7,3)+dati(i+7,3))/2;
 end
 
-%% Stima del trend lineare
+%% Stima del trend lineare e mostro modello senza trend.
 
 Phi = [ones(size(dati,1),1) dati(:,4)];
 thetaLS = Phi\dati(:,3);
-
 trend = Phi*thetaLS;
+dati_detrend = dati;
+dati_detrend(:,3)-trend;
 figure(1)
-plot(dati(:,3),'o-')
+plot(dati(:,3))
 hold on
 plot(trend)
 grid on
+legend("dati", "trend");
 
 figure(2)
 plot(dati(:,3)-trend)
 grid on
+title("dati normalizzati");
 
 
 %% Trend come media annuale
@@ -74,6 +77,7 @@ end
 %% variabili a caso
 giorni_anno = dati1(1:end,2);
 carico = dati1(1:end,3);
+
 x= (1:365);
 x= [x 1:365];
 x=x';
@@ -106,7 +110,7 @@ reti = {'trainlm', 'trainbfg', 'trainrp', 'trainscg', 'traincgb', 'traincgf', 't
 % devo fare loop N volte per trovare array MSE di ciascun tipo di funzione
 
 %%%% N SPECIFICA NUMERO DI ITERAZIONI. N BASSO FA BENE ALLA SALUTE DEL PC
-N=4; %non impostarlo a 1. non gli piace
+N=2; %non impostarlo a 1. non gli piace
 %%%% 
 
 % variabili di servizio
@@ -130,7 +134,7 @@ for iteratore_reti = 1:length(reti)
     for c = 1:N
         %disp (['    iterazione: ' num2str(c) ' : ' num2str(N)]);
         %% Fase di learning
-        nnetwork=fitnet([10,5,8], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
+        nnetwork=fitnet([5,5,5], char(reti(iteratore_reti))); %devo coppiare questo valore altrimenti nnetwork non cambia
         nnetwork=train(nnetwork,in,carico_n); 
         simulazione=sim(nnetwork,in);
         %% fase di calcolo MSE
@@ -198,32 +202,41 @@ in_test2(2,:)=[in(2,:) in(2,3:367)];
 % per trovare riga con mse minimo
 riga_mse_minimo=find (mse_minimo == min(mse_minimo));
 simulazione=sim(nnetwork_array{12}, in_test2);
-figure(1);
-grid on;
-hold on;
-subplot(2,1,1);
-title('modello migliore');
-plot(simulazione);
-hold on;
-plot(carico_test);
-legend('simulazione','dati');
-% stampa di errore relativo
-subplot(2,1,2);
-errortraining= simulazione(1:730)-carico_n;
-plot (errortraining, 'black');
-title('errore modello migliore');
-legend('error training','error test');
-
+%{
+%%%%%%%%%%
+array =cell(10,1);
+for i=1:12
+    nnetwork=fitnet([10,10,10], 'trainbr');
+    nnetwork=train(nnetwork,in,carico_n); 
+    simulazione=sim(nnetwork, in_test2);
+    array{i}=nnetwork;
+    figure(i);
+    grid on;
+    hold on;
+    subplot(2,1,1);
+    title('modello migliore');
+    plot(simulazione);
+    hold on;
+    plot(carico_test);
+    legend('simulazione','dati');
+    % stampa di errore relativo
+    subplot(2,1,2);
+    errortraining= simulazione(1:730)-carico_n;
+    plot (errortraining, 'black');
+    title('errore modello migliore');
+    legend('error training','error test');
+end
+%}
 %% plot dati con trend
 
 trend_1095=[];
 trend_1095=[trend' (trend(1:365)')+(trend(730)-trend(1))];
 figure(6);
-title("YAY");
 plot(trend_1095+simulazione);
 hold on;
 plot(carico_test+trend');
 legend('simulazione', 'carico');
+title("estensione di simulazione a 3 anni con aggiunta di trend");
 
 
 %% stampa di modello peggiore (MSE massimo)
