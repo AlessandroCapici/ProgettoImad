@@ -6,7 +6,7 @@ function s_hat = prediz(d,w)
 
 load('parametri_modello_annuale.mat')
 load('parametri_modello_vacanzeNatale.mat')
-if d<7 | d>356
+if d<7 || d>356
     if d>356 
         x=d-356;
     else

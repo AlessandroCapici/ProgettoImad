@@ -1,3 +1,8 @@
+% Stimiamo un modello a parte per le vacanze di Natale. In questo modello
+% non teniamo conto del giorno della settimana perchè ci sembra più
+% significativa l'informazione contenuta nel giorno dell'anno. Proviamo a
+% usare modelli polinomiali di vari gradi.
+
 clear
 close all
 clc
@@ -161,4 +166,4 @@ plot(dati(1:6,4),matrice_validazione(:,3))
 title('mdl')
 
 
-save parametri_modello_vacanzeNatale.mat thetaLS_vacanze
+% save parametri_modello_vacanzeNatale.mat thetaLS_vacanze

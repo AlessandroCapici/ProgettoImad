@@ -1,3 +1,6 @@
+% Stima del modello delle vacanze tenendo anche l'andamento settimanale.
+% Alla fine abbiamo scelto di non usare questo
+
 clear
 close all
 clc

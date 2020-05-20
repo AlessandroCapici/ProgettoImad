@@ -67,7 +67,7 @@ Phi_w = [cos(2*pi*dati(:,2)/7) sin(2*pi*dati(:,2)/7)...
 [thetaLS_w,~,~] = stimaLS(dati(:,3),Phi_w);
 stima = Phi_w*thetaLS_w;
 
-%% MOdello annuale
+%% Modello annuale
 dati_new = dati;
 dati_new(:,3) = dati_new(:,3)-stima;
 

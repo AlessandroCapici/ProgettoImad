@@ -10,7 +10,7 @@ dati = [dati x_vec];
 figure(1)
 plot(dati(:,3),'o-')
 grid on
-title('Plot brutale dei dati')
+title('Plot dei dati')
 
 %% Plot dei dati divisi per giorno della settimana
 dati_dom=[];
