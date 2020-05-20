@@ -5,11 +5,17 @@ function s_hat = prediz(d,w)
 %   Detailed explanation goes here
 
 load('parametri_modello_annuale.mat')
-
-if d<7 | d>356
+load('parametri_modello_vacanzeNatale.mat')
+if d<7 || d>356
+    if d>356 
+        x=d-356;
+    else
+        x=d+10;
+    end    
+    
+    Phi=[1 x x.^2];
+    supermegastima=Phi*thetaLS_vacanze;
     % Usiamo modello delle vacanze
-else if 0 %giorno di vacanza generico
-    % modello vacanze altro
 else
       % ci servono thetaLS_y thetaLS_w sd media  
         
@@ -23,13 +29,12 @@ else
       stima_w = Phi_w*thetaLS_w;
       
       supermegastima = stima_w + stima_y;
-      s_hat = supermegastima*sd;
-      s_hat = s_hat + media;
+      
       
       
 end
-        
-
-%s_hat = 0;
+ s_hat = supermegastima*sd;
+ s_hat = s_hat + media;       
+ 
 end
 
