@@ -333,6 +333,7 @@ title("calcolo media di errori nel intervallo di inizio:fine vacanza");
 
 %% parte in cui cerco di incollare stime (Y_hat) e errore e valutare migliorie
 errore_usabile=errore_con_medie/2; %perchè ho sommato due errori prima
+save('dati_vacanze_generiche.mat','errore_usabile');
 errore_usabile=[errore_usabile' (errore_con_medie/2)']';
 
 figure(12)
@@ -348,11 +349,12 @@ Y_hat_new=Y_hat+errore_usabile;
 errore_finale=dati(:,3)-Y_hat_new;
 errore_finale=errore_finale.*rowsToDelete;
 
+errore_finale_minore_di_0 = errore_finale.*double(errore_finale<0);
+errore_iniziale_minore_di_0=-errore.*double(errore<0);
+
 %{
 %% non ho sinceramente idea perchè ho fatto sta cosa 
-errore_finale_minore_di_0 = errore_finale.*double(errore_finale<0);
 %calcolo la media dell'errore iniziale considerando solo picchi negativi
-errore_iniziale_minore_di_0=-errore.*double(errore<0);
 mse_iniziale = immse(errore_iniziale_minore_di_0, zeros(730,1));
 mse_finale = immse(errore_finale_minore_di_0, zeros(730,1));
 %}
