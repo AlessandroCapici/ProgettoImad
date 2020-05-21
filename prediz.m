@@ -6,6 +6,9 @@ function s_hat = prediz(d,w)
 
 load('parametri_modello_annuale.mat')
 load('parametri_modello_vacanzeNatale.mat')
+%%pezzo vacanze
+load('valori_vacanze_generiche.mat')
+%
 if d<7 || d>356
     if d>356 
         x=d-356;
@@ -29,8 +32,9 @@ else
       stima_w = Phi_w*thetaLS_w;
       
       supermegastima = stima_w + stima_y;
-      
-      
+      % per aggiungere l'errore delle vacanze
+      supermegastima = supermegastima+errore_usabile(d);
+      %
       
 end
  s_hat = supermegastima*sd;
