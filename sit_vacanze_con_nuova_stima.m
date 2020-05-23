@@ -276,7 +276,7 @@ ylabel("errore");
 
 %% tentativo di incollare stima (Y_hat) e errore e valutare migliorie
 errore_usabile=errore_con_medie/2; %perchè errore_con_medie è una somma su giorni
-save('dati_vacanze_generiche.mat','errore_usabile');
+save('valori_vacanze_generiche.mat','errore_usabile');
 errore_usabile=[errore_usabile' (errore_con_medie/2)']';
 
 figure(12)
