@@ -66,7 +66,7 @@ grid on
 
 %% Proviamo con un modello lineare
 q=2;
-n=16;
+n=17;
 matrice_validazione=zeros(6,3);
 Phi=[ones(17,1) x];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
@@ -82,7 +82,7 @@ matrice_validazione(1,3)=MDL;
 
 %% Proviamo con un modello quadratico
 q=3;
-n=16;
+n=17;
 Phi=[ones(17,1) x x.^2];
 [thetaLS_vacanze,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS_vacanze;
@@ -96,7 +96,7 @@ plot(x,carico_hat);
 
 %% Proviamo con un modello cubico
 q=4;
-n=16;
+n=17;
 Phi=[ones(17,1) x x.^2 x.^3];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
@@ -110,7 +110,7 @@ matrice_validazione(3,3)=MDL;
 
 %% Proviamo con un modello di quarto grado
 q=5;
-n=16;
+n=17;
 Phi=[ones(17,1) x x.^2 x.^3 x.^4];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
@@ -124,7 +124,7 @@ matrice_validazione(4,3)=MDL;
 
 %% Proviamo con un modello di quinto grado
 q=6;
-n=16;
+n=17;
 Phi=[ones(17,1) x x.^2 x.^3 x.^4 x.^5];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;
@@ -138,7 +138,7 @@ matrice_validazione(5,3)=MDL;
 
 %% Proviamo con un modello di sesto grado
 q=7;
-n=16;
+n=17;
 Phi=[ones(17,1) x x.^2 x.^3 x.^4 x.^5 x.^6];
 [thetaLS,var_theta,SSR] = stimaLS(dati_detrendizzati(i:f,3),Phi);
 carico_hat=Phi*thetaLS;

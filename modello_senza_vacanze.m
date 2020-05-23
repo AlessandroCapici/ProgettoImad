@@ -79,4 +79,4 @@ Phi_y = [ones(f,1) dati_new(i:f,1) dati_new(i:f,1).^2 dati_new(i:f,1).^3];
 
 %% Salvataggio dati
 
-save parametri_modello_annuale.mat thetaLS_y thetaLS_w sd media
+%save parametri_modello_annuale.mat thetaLS_y thetaLS_w sd media

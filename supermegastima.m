@@ -1,4 +1,5 @@
 % Script per stimare tutti i dati e fare il grafico di dati veri e stime
+% usando la funzione prediz
 
 clear
 close all

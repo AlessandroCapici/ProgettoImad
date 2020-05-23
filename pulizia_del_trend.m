@@ -32,6 +32,7 @@ plot(dati(:,3),'o-')
 hold on
 plot(trend)
 grid on
+legend('dati','trend lineare')
 
 figure(2)
 plot(dati(:,3)-trend,'-o')
@@ -55,6 +56,7 @@ dati1(:,3) = dati1(:,3)-vec;
 figure(3)
 plot(dati1(:,3))
 grid on
+title('Dati a cui viene sottratta la media annuale')
 
 % Questa è la versione che ci piace di più
 
@@ -77,7 +79,9 @@ plot(y_mediamobile,'o-')
 hold on
 plot(trend1)
 grid on
+legend('Media mobile dei dati', 'Trend lineare stimato sulla media mobile')
 
 figure(5)
 plot(dati(:,3)-trend1)
 grid on
+title('Dati a cui e'' stato sottratto il trend stimato sulla media mobile')

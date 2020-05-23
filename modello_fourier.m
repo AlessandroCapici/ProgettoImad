@@ -1,3 +1,6 @@
+% In questo script abbiamo fatto alcune prove con le serie di Fourier. Alla
+% fine non abbiamo tenuto i risultati ottenuti qui.
+
 clear
 close all
 clc
@@ -39,16 +42,16 @@ end
 
 rowsToDelete = flip(rowsToDelete);
 
-% for j = rowsToDelete
-%     dati(j,:)=[];
-% end
+for j = rowsToDelete
+    dati(j,:)=[];
+end
 
 %% Normalizzo i dati
 sd = std(dati(:,3));
 dati(:,3)=(1/sd)*dati(:,3);
 
 %%
-n = 700;
+n = 350;
 
 Phi = [ones(n,1) ...
     cos(dati(1:n,1)*2*pi/365) sin(dati(1:n,1)*2*pi/365)...
@@ -87,10 +90,12 @@ xlabel('Giorni')
 ylabel('Carico')
 
 errore = Y_hat-dati(:,3);
+SSRv = errore(351:end)'*errore(351:end);
 
 figure(2)
 plot(dati(:,4),errore)
 grid on
+title('Plot dell''errore del modello')
 
 A=1;
 B=ones(1,7)/7;
@@ -102,3 +107,4 @@ errore_mm=filter(B,A,errore);
 figure(4)
 plot(dati(:,4),errore_mm)
 grid on
+title('Plot della media mobile su una settimana dell''errore del modello')
