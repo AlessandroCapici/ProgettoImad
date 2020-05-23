@@ -82,6 +82,9 @@ hold on
 plot(dati(:,4),Y_hat)
 grid on
 legend('Dati','Stima')
+title('Modello con le serie di Fourier')
+xlabel('Giorni')
+ylabel('Carico')
 
 errore = Y_hat-dati(:,3);
 

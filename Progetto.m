@@ -128,6 +128,10 @@ plot(dati(:,4), dati(:,3),'o-')
 grid on
 hold on
 plot(dati(:,4),stima)
+title('Andamento settimanale')
+xlabel('Carico')
+ylabel('Giorni')
+legend('Dati', 'Stima')
 
 %save ./salvataggi/prova_poli4.mat fpe aic mdl SSRv q 
 
@@ -136,6 +140,9 @@ dati_new(:,3) = dati_new(:,3)-stima;
 
 figure(3)
 plot(dati_new(:,4), dati_new(:,3))
+title('Dati puliti dall''andamento settimanale')
+ylabel('Carico')
+xlabel('Giorni')
 
 %% Stima dell'andamento annuale usando i dat a cui e' stato tolto l'andamento settimanale
 
@@ -165,6 +172,11 @@ plot(dati_new(:,4), dati_new(:,3),'o-')
 grid on
 hold on
 plot(dati_new(:,4),stimatot)
+title('Stima annuale')
+ylabel('Carico')
+xlabel('Giorni')
+legend('Dati','Stima')
+
 
 supermegastima=stima+stimatot;
 figure(5)
@@ -172,4 +184,6 @@ plot(dati(:,4), dati(:,3),'o-')
 grid on
 hold on
 plot(dati(:,4),supermegastima)
-
+title('Stima annuale')
+ylabel('Carico')
+xlabel('Giorni')
