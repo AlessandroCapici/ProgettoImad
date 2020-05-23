@@ -50,7 +50,10 @@ end
 
 stima = zeros(1095,1);
 
+%stima = zeros(730,1);
+
 for i = 1:1095
+%for i = 1:730
     stima(i)=prediz(X(i,1),X(i,2));
     if i<=365*2
         stima(i) = stima(i)-crescita;
@@ -61,5 +64,8 @@ for i = 1:1095
 end
 
 plot((1:1095),stima,'r')
+%plot((1:730),stima,'r')
 legend('Dati', 'Stima')
-
+title('Stima finale')
+xlabel('Giorno')
+ylabel('Carico')

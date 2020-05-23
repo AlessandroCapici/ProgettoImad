@@ -34,8 +34,11 @@ plot(trend)
 grid on
 
 figure(2)
-plot(dati(:,3)-trend)
+plot(dati(:,3)-trend,'-o')
 grid on
+title("Eliminazione del trend lineare")
+xlabel('Giorni')
+ylabel('Consumi')
 
 
 %% Trend come media annuale
