@@ -2,14 +2,14 @@ function s_hat = prediz(d,w)
 %PREDIZ Fa la previsione a lungo termine del consumo energetico della
 %Germania. d e' il numero del giorno dell'anno considerato, w e' il giorno
 %della settimana
-%   Detailed explanation goes here
+
 
 load('parametri_modello_annuale.mat')
 load('parametri_modello_vacanzeNatale.mat')
-%%pezzo vacanze
 load('valori_vacanze_generiche.mat')
 %
 if d<7 || d>356
+    % Usiamo modello delle vacanze di Natale
     if d>356 
         x=d-356;
     else
@@ -18,9 +18,8 @@ if d<7 || d>356
     
     Phi=[1 x x.^2];
     supermegastima=Phi*thetaLS_vacanze;
-    % Usiamo modello delle vacanze
+    
 else
-      % ci servono thetaLS_y thetaLS_w sd media  
         
         
       % modello annuale
@@ -34,7 +33,6 @@ else
       supermegastima = stima_w + stima_y;
       % per aggiungere l'errore delle vacanze
       supermegastima = supermegastima+errore_usabile(d);
-      %
       
 end
  s_hat = supermegastima*sd;

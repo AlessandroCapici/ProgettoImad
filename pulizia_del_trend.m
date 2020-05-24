@@ -1,3 +1,6 @@
+% In questo script abbiamo provato vari metodi per togliere il trend dai
+% dati
+
 clear
 close all
 clc
